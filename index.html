@@ -4,230 +4,161 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
 <meta name="theme-color" content="#0a1628"/>
-<meta name="description" content="خريطة العالم التفاعلية - معلومات الدول والأعلام"/>
 <title>خريطة العالم التفاعلية</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
-  :root{
-    --bg:#0a1628;
-    --ocean:#0d1e3a;
-    --surface:rgba(4,10,28,0.97);
-    --border:rgba(100,160,255,0.22);
-    --text:#e8f0ff;
-    --sub:#6a8cb0;
-    --accent:#a8c8e8;
-    --gold:#e8a030;
-    --radius:14px;
-    --font:'Cairo',sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:var(--font)}
+:root{
+  --bg:#0a1628;--ocean:#0d1e3a;--card:rgba(4,10,28,0.97);
+  --border:rgba(100,160,255,0.22);--text:#e8f0ff;--sub:#6a8cb0;
+  --accent:#a8c8e8;--gold:#e8a030;--font:'Cairo',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:var(--font)}
 
-  /* ── Header ── */
-  #header{
-    position:fixed;top:0;left:0;right:0;z-index:50;
-    background:rgba(6,14,34,0.92);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    border-bottom:1px solid var(--border);
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 14px;
-    height:48px;
-  }
-  #header h1{font-size:15px;font-weight:700;color:var(--text);letter-spacing:0.02em}
-  #counter{
-    font-size:11px;color:var(--gold);
-    background:rgba(232,160,48,0.12);
-    border:1px solid rgba(232,160,48,0.25);
-    border-radius:20px;padding:3px 10px;
-    white-space:nowrap;
-  }
+/* ── header ── */
+#header{
+  position:fixed;top:0;left:0;right:0;z-index:50;height:48px;
+  background:rgba(6,14,34,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 14px;
+}
+#header h1{font-size:15px;font-weight:700;color:var(--text)}
+#counter{font-size:11px;color:var(--gold);background:rgba(232,160,48,.12);border:1px solid rgba(232,160,48,.28);border-radius:20px;padding:3px 10px;white-space:nowrap}
 
-  /* ── Sub-header pills ── */
-  #subheader{
-    position:fixed;top:48px;left:0;right:0;z-index:49;
-    background:rgba(6,14,34,0.88);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    border-bottom:1px solid rgba(100,160,255,0.12);
-    display:flex;align-items:center;justify-content:center;
-    gap:10px;padding:7px 12px;height:40px;
-  }
-  .pill{
-    display:flex;align-items:center;gap:6px;
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(100,160,255,0.15);
-    border-radius:20px;
-    padding:4px 12px;
-    font-size:12px;font-weight:600;color:var(--accent);
-    white-space:nowrap;
-    transition:background 0.2s;
-  }
-  .pill .icon{font-size:14px;line-height:1}
-  .pill:hover{background:rgba(100,160,255,0.1)}
+/* ── subheader ── */
+#subheader{
+  position:fixed;top:48px;left:0;right:0;z-index:49;height:38px;
+  background:rgba(6,14,34,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(100,160,255,.1);
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;
+}
+.pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.05);border:1px solid rgba(100,160,255,.15);border-radius:20px;padding:3px 11px;font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap}
+.pill .icon{font-size:13px}
 
-  /* ── Map container ── */
-  #mc{
-    position:fixed;top:88px;left:0;right:0;bottom:52px;
-    background:var(--bg);overflow:hidden;cursor:grab;
-    touch-action:none;
-  }
-  #mc.dragging{cursor:grabbing}
-  #ms{width:100%;height:100%;display:block}
+/* ── map ── */
+#mc{
+  position:fixed;top:86px;left:0;right:0;bottom:50px;
+  overflow:hidden;touch-action:manipulation;cursor:grab;background:var(--bg);
+}
+#mc.dragging{cursor:grabbing}
+#ms{width:100%;height:100%;display:block}
+.cp{
+  stroke:#1a2a4a;stroke-width:.4px;cursor:pointer;
+  vector-effect:non-scaling-stroke;          /* تحسين #8 */
+  transition:filter .12s;
+}
+.cp:hover{filter:brightness(1.6) saturate(1.3);stroke:#fff}
+.cp.active{stroke:#fff;stroke-width:1.5px;filter:brightness(1.7)}
+.sm-dot{cursor:pointer;vector-effect:non-scaling-stroke}
 
-  /* ── Country paths ── */
-  .cp{stroke:#1a2a4a;stroke-width:0.4px;cursor:pointer;transition:filter 0.12s}
-  .cp:hover,.cp.touch-hover{filter:brightness(1.6) saturate(1.3);stroke:#fff;stroke-width:0.7px}
-  .cp.active{stroke:#fff;stroke-width:1px;filter:brightness(1.7)}
+/* ── tooltip ── */
+#tt{
+  position:fixed;pointer-events:none;background:var(--card);
+  border:1px solid var(--border);border-radius:14px;padding:14px 16px;
+  min-width:190px;max-width:220px;display:none;z-index:200;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+}
+#tt.vis{display:block}
+.tt-img{width:72px;height:48px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,.14);display:block;margin:0 auto 10px}
+.tt-err{font-size:36px;text-align:center;display:block;margin:0 auto 8px;line-height:1}
+.tt-sep{width:100%;height:.5px;background:rgba(100,150,220,.18);margin:8px 0}
+.tt-ar{font-size:13px;font-weight:700;color:var(--text);text-align:center;direction:rtl}
+.tt-en{font-size:11px;color:var(--sub);text-align:center}
+.tt-lbl{font-size:9.5px;color:#4a6a90;text-transform:uppercase;letter-spacing:.07em;text-align:center;margin-top:8px}
+.tt-cap-ar{font-size:12px;color:var(--accent);text-align:center;direction:rtl;font-weight:600}
+.tt-cap-en{font-size:11px;color:#5a7a9a;text-align:center}
 
-  /* ── Small dots ── */
-  .sm-dot{cursor:pointer}
+/* ── zoom btns ── */
+#zbtns{position:fixed;bottom:60px;right:12px;display:flex;flex-direction:column;gap:6px;z-index:40}
+.zbtn{
+  width:36px;height:36px;background:rgba(8,18,44,.9);border:1px solid var(--border);
+  border-radius:9px;color:var(--accent);font-size:17px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;-webkit-user-select:none;
+  transition:background .15s,transform .1s;box-shadow:0 2px 10px rgba(0,0,0,.4);
+}
+.zbtn:hover,.zbtn:active{background:rgba(30,60,120,.9);transform:scale(.95)}
+#zbtn-eu{font-size:10px;font-weight:700;color:var(--gold)}
 
-  /* ── Tooltip ── */
+/* ── footer ── */
+#footer{
+  position:fixed;bottom:0;left:0;right:0;height:50px;z-index:50;
+  background:rgba(6,14,34,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 16px;
+}
+#hint{font-size:10px;color:rgba(120,160,210,.5);direction:rtl}
+#zinfo{font-size:11px;color:rgba(100,140,200,.5);font-weight:600}
+
+/* ── legend ── */
+#legend{
+  position:fixed;top:96px;right:12px;
+  background:rgba(6,14,34,.88);border:1px solid var(--border);
+  border-radius:8px;padding:6px 10px;z-index:40;
+  display:flex;align-items:center;gap:6px;
+}
+#legend span{font-size:10px;color:rgba(200,175,90,.75)}
+
+/* ── loader ── */
+#loader{
+  position:fixed;inset:0;z-index:999;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+}
+#loader.gone{display:none}
+.spin{width:40px;height:40px;border:3px solid rgba(100,160,255,.15);border-top-color:rgba(100,160,255,.7);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader p{font-size:13px;color:var(--sub)}
+#loader .sub{font-size:11px;color:rgba(100,140,200,.45)}
+
+/* ── mobile tweaks ── */
+@media(max-width:520px){
+  /* تحسين #9 */
   #tt{
-    position:fixed;
-    pointer-events:none;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:14px 16px;
-    min-width:190px;max-width:220px;
-    display:none;z-index:200;
-    box-shadow:0 8px 32px rgba(0,0,0,0.6);
-    transition:opacity 0.15s;
+    left:50%!important;top:auto!important;
+    bottom:calc(env(safe-area-inset-bottom) + 70px)!important;
+    transform:translateX(-50%);
+    min-width:260px;max-width:90vw;
   }
-  #tt.vis{display:block}
-  .tt-flag-img{width:56px;height:37px;object-fit:cover;border-radius:5px;border:1px solid rgba(255,255,255,0.12);display:block;margin:0 auto 9px}
-  .tt-flag-emoji{font-size:32px;text-align:center;display:block;margin:0 auto 7px;line-height:1}
-  .tt-sep{width:100%;height:0.5px;background:rgba(100,150,220,0.2);margin:8px 0}
-  .tt-ar{font-size:13px;font-weight:700;color:var(--text);text-align:center;direction:rtl}
-  .tt-en{font-size:11px;color:var(--sub);text-align:center;letter-spacing:0.03em}
-  .tt-lbl{font-size:9.5px;color:#4a6a90;text-transform:uppercase;letter-spacing:0.07em;text-align:center;margin-top:8px}
-  .tt-cap-ar{font-size:12px;color:var(--accent);text-align:center;direction:rtl;font-weight:600}
-  .tt-cap-en{font-size:11px;color:#5a7a9a;text-align:center}
-
-  /* ── Zoom buttons ── */
-  #zbtns{
-    position:fixed;bottom:62px;right:12px;
-    display:flex;flex-direction:column;gap:6px;z-index:40;
-  }
-  .zbtn{
-    width:38px;height:38px;
-    background:rgba(8,18,44,0.9);
-    border:1px solid var(--border);
-    border-radius:9px;
-    color:var(--accent);
-    font-size:18px;font-family:var(--font);
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;user-select:none;
-    transition:background 0.15s,transform 0.1s;
-    box-shadow:0 2px 10px rgba(0,0,0,0.4);
-    -webkit-user-select:none;
-  }
-  .zbtn:hover,.zbtn:active{background:rgba(30,60,120,0.9);transform:scale(0.95)}
-  #zbtn-eu{font-size:11px;font-weight:700;letter-spacing:0.02em;color:var(--gold)}
-
-  /* ── Bottom bar ── */
-  #footer{
-    position:fixed;bottom:0;left:0;right:0;
-    height:52px;z-index:50;
-    background:rgba(6,14,34,0.92);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    border-top:1px solid var(--border);
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 16px;
-  }
-  #hint{font-size:10px;color:rgba(120,160,210,0.5);direction:rtl}
-  #zinfo{font-size:11px;color:rgba(100,140,200,0.5);font-weight:600}
-
-  /* ── Legend ── */
-  #legend{
-    position:fixed;top:98px;right:12px;
-    background:rgba(6,14,34,0.88);
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:7px 10px;z-index:40;
-    display:flex;align-items:center;gap:7px;
-  }
-  #legend circle{display:inline-block}
-  #legend span{font-size:10px;color:rgba(200,175,90,0.75)}
-
-  /* ── Loading overlay ── */
-  #loader{
-    position:fixed;inset:0;z-index:999;
-    background:var(--bg);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-  }
-  #loader.gone{display:none}
-  .spin{
-    width:40px;height:40px;
-    border:3px solid rgba(100,160,255,0.15);
-    border-top-color:rgba(100,160,255,0.7);
-    border-radius:50%;
-    animation:spin 0.8s linear infinite;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
-  #loader p{font-size:13px;color:var(--sub)}
-
-  /* ── Mobile tooltip tweak (bottom sheet) ── */
-  @media(max-width:520px){
-    #tt{
-      left:50%!important;top:auto!important;bottom:60px!important;
-      transform:translateX(-50%);
-      min-width:260px;max-width:90vw;
-    }
-    #header h1{font-size:13px}
-    .pill{font-size:11px;padding:3px 9px;gap:4px}
-    .pill .icon{font-size:13px}
-  }
+  #header h1{font-size:13px}
+  .pill{font-size:11px;padding:2px 8px}
+}
 </style>
 </head>
 <body>
 
-<!-- Loading -->
 <div id="loader">
   <div class="spin"></div>
-  <p>جارٍ تحميل خريطة العالم…</p>
+  <p>جارٍ تحميل بيانات الدول…</p>
+  <p class="sub" id="load-status"></p>
 </div>
 
-<!-- Header -->
 <div id="header">
   <h1>🌍 خريطة العالم التفاعلية</h1>
-  <div id="counter">٠ دولة</div>
+  <div id="counter">جارٍ التحميل…</div>
 </div>
-
-<!-- Sub-header pills -->
 <div id="subheader">
   <div class="pill"><span class="icon">🗺️</span> دول</div>
   <div class="pill"><span class="icon">🏛️</span> عواصم</div>
   <div class="pill"><span class="icon">🚩</span> أعلام</div>
 </div>
 
-<!-- Map -->
-<div id="mc">
-  <svg id="ms" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet"></svg>
-</div>
+<div id="mc"><svg id="ms" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet"></svg></div>
 
-<!-- Legend -->
 <div id="legend">
-  <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#e8a030" stroke="#fff" stroke-width="0.8"/></svg>
+  <svg width="11" height="11"><circle cx="5.5" cy="5.5" r="4.5" fill="#e8a030" stroke="#fff" stroke-width=".7"/></svg>
   <span>دول أوروبية صغيرة</span>
 </div>
 
-<!-- Zoom buttons -->
 <div id="zbtns">
   <div class="zbtn" id="zin">+</div>
   <div class="zbtn" id="zout">−</div>
   <div class="zbtn" id="zbtn-eu">EU</div>
-  <div class="zbtn" id="zrst" style="font-size:15px">⌂</div>
+  <div class="zbtn" id="zrst" style="font-size:14px">⌂</div>
 </div>
 
-<!-- Tooltip -->
 <div id="tt">
-  <span class="tt-flag-emoji" id="tt-emoji"></span>
-  <img class="tt-flag-img" id="tt-img" src="" alt="" style="display:none"/>
+  <span class="tt-err" id="tt-err" style="display:none">🏳️</span>
+  <img class="tt-img" id="tt-img" src="" alt="" style="display:none"/>
   <div class="tt-ar" id="tt-ar">-</div>
   <div class="tt-en" id="tt-en">-</div>
   <div class="tt-sep"></div>
@@ -236,7 +167,6 @@
   <div class="tt-cap-en" id="tt-cap-en">-</div>
 </div>
 
-<!-- Footer -->
 <div id="footer">
   <span id="hint">👆 المس أي دولة لمعرفة معلوماتها</span>
   <span id="zinfo">×1.0</span>
@@ -245,652 +175,488 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <script>
-/* ══════════════════════════════════════
-   DATA
-══════════════════════════════════════ */
-const CD={
-  "004":{ar:"أفغانستان",en:"Afghanistan",car:"كابل",cen:"Kabul",flag:"🇦🇫",iso:"af"},
-  "008":{ar:"ألبانيا",en:"Albania",car:"تيرانا",cen:"Tirana",flag:"🇦🇱",iso:"al"},
-  "012":{ar:"الجزائر",en:"Algeria",car:"الجزائر",cen:"Algiers",flag:"🇩🇿",iso:"dz"},
-  "024":{ar:"أنغولا",en:"Angola",car:"لواندا",cen:"Luanda",flag:"🇦🇴",iso:"ao"},
-  "032":{ar:"الأرجنتين",en:"Argentina",car:"بوينس آيرس",cen:"Buenos Aires",flag:"🇦🇷",iso:"ar"},
-  "036":{ar:"أستراليا",en:"Australia",car:"كانبيرا",cen:"Canberra",flag:"🇦🇺",iso:"au"},
-  "040":{ar:"النمسا",en:"Austria",car:"فيينا",cen:"Vienna",flag:"🇦🇹",iso:"at"},
-  "031":{ar:"أذربيجان",en:"Azerbaijan",car:"باكو",cen:"Baku",flag:"🇦🇿",iso:"az"},
-  "050":{ar:"بنغلاديش",en:"Bangladesh",car:"دكا",cen:"Dhaka",flag:"🇧🇩",iso:"bd"},
-  "056":{ar:"بلجيكا",en:"Belgium",car:"بروكسل",cen:"Brussels",flag:"🇧🇪",iso:"be"},
-  "064":{ar:"بوتان",en:"Bhutan",car:"تيمفو",cen:"Thimphu",flag:"🇧🇹",iso:"bt"},
-  "068":{ar:"بوليفيا",en:"Bolivia",car:"سوكري",cen:"Sucre",flag:"🇧🇴",iso:"bo"},
-  "070":{ar:"البوسنة والهرسك",en:"Bosnia & Herzegovina",car:"سراييفو",cen:"Sarajevo",flag:"🇧🇦",iso:"ba"},
-  "072":{ar:"بتسوانا",en:"Botswana",car:"غابورون",cen:"Gaborone",flag:"🇧🇼",iso:"bw"},
-  "076":{ar:"البرازيل",en:"Brazil",car:"برازيليا",cen:"Brasília",flag:"🇧🇷",iso:"br"},
-  "096":{ar:"بروناي",en:"Brunei",car:"بندر سيري بيغاوان",cen:"Bandar Seri Begawan",flag:"🇧🇳",iso:"bn"},
-  "100":{ar:"بلغاريا",en:"Bulgaria",car:"صوفيا",cen:"Sofia",flag:"🇧🇬",iso:"bg"},
-  "104":{ar:"ميانمار",en:"Myanmar",car:"نيبيداو",cen:"Naypyidaw",flag:"🇲🇲",iso:"mm"},
-  "108":{ar:"بوروندي",en:"Burundi",car:"غيتيغا",cen:"Gitega",flag:"🇧🇮",iso:"bi"},
-  "116":{ar:"كمبوديا",en:"Cambodia",car:"بنوم بنه",cen:"Phnom Penh",flag:"🇰🇭",iso:"kh"},
-  "120":{ar:"الكاميرون",en:"Cameroon",car:"ياوندي",cen:"Yaoundé",flag:"🇨🇲",iso:"cm"},
-  "124":{ar:"كندا",en:"Canada",car:"أوتاوا",cen:"Ottawa",flag:"🇨🇦",iso:"ca"},
-  "140":{ar:"أفريقيا الوسطى",en:"Central African Republic",car:"بانغي",cen:"Bangui",flag:"🇨🇫",iso:"cf"},
-  "144":{ar:"سريلانكا",en:"Sri Lanka",car:"كولومبو",cen:"Colombo",flag:"🇱🇰",iso:"lk"},
-  "148":{ar:"تشاد",en:"Chad",car:"نجامينا",cen:"N'Djamena",flag:"🇹🇩",iso:"td"},
-  "152":{ar:"تشيلي",en:"Chile",car:"سانتياغو",cen:"Santiago",flag:"🇨🇱",iso:"cl"},
-  "156":{ar:"الصين",en:"China",car:"بكين",cen:"Beijing",flag:"🇨🇳",iso:"cn"},
-  "170":{ar:"كولومبيا",en:"Colombia",car:"بوغوتا",cen:"Bogotá",flag:"🇨🇴",iso:"co"},
-  "178":{ar:"الكونغو",en:"Congo",car:"برازافيل",cen:"Brazzaville",flag:"🇨🇬",iso:"cg"},
-  "180":{ar:"الكونغو الديمقراطية",en:"DR Congo",car:"كينشاسا",cen:"Kinshasa",flag:"🇨🇩",iso:"cd"},
-  "188":{ar:"كوستاريكا",en:"Costa Rica",car:"سان خوسيه",cen:"San José",flag:"🇨🇷",iso:"cr"},
-  "191":{ar:"كرواتيا",en:"Croatia",car:"زغرب",cen:"Zagreb",flag:"🇭🇷",iso:"hr"},
-  "192":{ar:"كوبا",en:"Cuba",car:"هافانا",cen:"Havana",flag:"🇨🇺",iso:"cu"},
-  "196":{ar:"قبرص",en:"Cyprus",car:"نيقوسيا",cen:"Nicosia",flag:"🇨🇾",iso:"cy"},
-  "203":{ar:"التشيك",en:"Czech Republic",car:"براغ",cen:"Prague",flag:"🇨🇿",iso:"cz"},
-  "204":{ar:"بنين",en:"Benin",car:"بورتو نوفو",cen:"Porto-Novo",flag:"🇧🇯",iso:"bj"},
-  "208":{ar:"الدنمارك",en:"Denmark",car:"كوبنهاغن",cen:"Copenhagen",flag:"🇩🇰",iso:"dk"},
-  "214":{ar:"جمهورية الدومينيكان",en:"Dominican Republic",car:"سانتو دومينغو",cen:"Santo Domingo",flag:"🇩🇴",iso:"do"},
-  "218":{ar:"الإكوادور",en:"Ecuador",car:"كيتو",cen:"Quito",flag:"🇪🇨",iso:"ec"},
-  "818":{ar:"مصر",en:"Egypt",car:"القاهرة",cen:"Cairo",flag:"🇪🇬",iso:"eg"},
-  "222":{ar:"السلفادور",en:"El Salvador",car:"سان سلفادور",cen:"San Salvador",flag:"🇸🇻",iso:"sv"},
-  "226":{ar:"غينيا الاستوائية",en:"Equatorial Guinea",car:"مالابو",cen:"Malabo",flag:"🇬🇶",iso:"gq"},
-  "232":{ar:"إريتريا",en:"Eritrea",car:"أسمرة",cen:"Asmara",flag:"🇪🇷",iso:"er"},
-  "233":{ar:"إستونيا",en:"Estonia",car:"تالين",cen:"Tallinn",flag:"🇪🇪",iso:"ee"},
-  "231":{ar:"إثيوبيا",en:"Ethiopia",car:"أديس أبابا",cen:"Addis Ababa",flag:"🇪🇹",iso:"et"},
-  "246":{ar:"فنلندا",en:"Finland",car:"هلسنكي",cen:"Helsinki",flag:"🇫🇮",iso:"fi"},
-  "250":{ar:"فرنسا",en:"France",car:"باريس",cen:"Paris",flag:"🇫🇷",iso:"fr"},
-  "266":{ar:"الغابون",en:"Gabon",car:"ليبرفيل",cen:"Libreville",flag:"🇬🇦",iso:"ga"},
-  "270":{ar:"غامبيا",en:"Gambia",car:"بانجول",cen:"Banjul",flag:"🇬🇲",iso:"gm"},
-  "268":{ar:"جورجيا",en:"Georgia",car:"تبيليسي",cen:"Tbilisi",flag:"🇬🇪",iso:"ge"},
-  "276":{ar:"ألمانيا",en:"Germany",car:"برلين",cen:"Berlin",flag:"🇩🇪",iso:"de"},
-  "288":{ar:"غانا",en:"Ghana",car:"أكرا",cen:"Accra",flag:"🇬🇭",iso:"gh"},
-  "300":{ar:"اليونان",en:"Greece",car:"أثينا",cen:"Athens",flag:"🇬🇷",iso:"gr"},
-  "320":{ar:"غواتيمالا",en:"Guatemala",car:"غواتيمالا سيتي",cen:"Guatemala City",flag:"🇬🇹",iso:"gt"},
-  "324":{ar:"غينيا",en:"Guinea",car:"كوناكري",cen:"Conakry",flag:"🇬🇳",iso:"gn"},
-  "328":{ar:"غيانا",en:"Guyana",car:"جورج تاون",cen:"Georgetown",flag:"🇬🇾",iso:"gy"},
-  "332":{ar:"هايتي",en:"Haiti",car:"بور أو برانس",cen:"Port-au-Prince",flag:"🇭🇹",iso:"ht"},
-  "340":{ar:"هندوراس",en:"Honduras",car:"تيغوسيغالبا",cen:"Tegucigalpa",flag:"🇭🇳",iso:"hn"},
-  "348":{ar:"هنغاريا",en:"Hungary",car:"بودابست",cen:"Budapest",flag:"🇭🇺",iso:"hu"},
-  "352":{ar:"آيسلندا",en:"Iceland",car:"ريكيافيك",cen:"Reykjavik",flag:"🇮🇸",iso:"is"},
-  "356":{ar:"الهند",en:"India",car:"نيودلهي",cen:"New Delhi",flag:"🇮🇳",iso:"in"},
-  "360":{ar:"إندونيسيا",en:"Indonesia",car:"جاكرتا",cen:"Jakarta",flag:"🇮🇩",iso:"id"},
-  "364":{ar:"إيران",en:"Iran",car:"طهران",cen:"Tehran",flag:"🇮🇷",iso:"ir"},
-  "368":{ar:"العراق",en:"Iraq",car:"بغداد",cen:"Baghdad",flag:"🇮🇶",iso:"iq"},
-  "372":{ar:"أيرلندا",en:"Ireland",car:"دبلن",cen:"Dublin",flag:"🇮🇪",iso:"ie"},
-  "376":{ar:"إسرائيل",en:"Israel",car:"تل أبيب",cen:"Tel Aviv",flag:"🇮🇱",iso:"il"},
-  "380":{ar:"إيطاليا",en:"Italy",car:"روما",cen:"Rome",flag:"🇮🇹",iso:"it"},
-  "384":{ar:"كوت ديفوار",en:"Côte d'Ivoire",car:"يامسوكرو",cen:"Yamoussoukro",flag:"🇨🇮",iso:"ci"},
-  "392":{ar:"اليابان",en:"Japan",car:"طوكيو",cen:"Tokyo",flag:"🇯🇵",iso:"jp"},
-  "400":{ar:"الأردن",en:"Jordan",car:"عمّان",cen:"Amman",flag:"🇯🇴",iso:"jo"},
-  "398":{ar:"كازاخستان",en:"Kazakhstan",car:"أستانا",cen:"Astana",flag:"🇰🇿",iso:"kz"},
-  "404":{ar:"كينيا",en:"Kenya",car:"نيروبي",cen:"Nairobi",flag:"🇰🇪",iso:"ke"},
-  "408":{ar:"كوريا الشمالية",en:"North Korea",car:"بيونغ يانغ",cen:"Pyongyang",flag:"🇰🇵",iso:"kp"},
-  "410":{ar:"كوريا الجنوبية",en:"South Korea",car:"سيئول",cen:"Seoul",flag:"🇰🇷",iso:"kr"},
-  "414":{ar:"الكويت",en:"Kuwait",car:"مدينة الكويت",cen:"Kuwait City",flag:"🇰🇼",iso:"kw"},
-  "417":{ar:"قيرغيزستان",en:"Kyrgyzstan",car:"بيشكيك",cen:"Bishkek",flag:"🇰🇬",iso:"kg"},
-  "418":{ar:"لاوس",en:"Laos",car:"فيينتيان",cen:"Vientiane",flag:"🇱🇦",iso:"la"},
-  "428":{ar:"لاتفيا",en:"Latvia",car:"ريغا",cen:"Riga",flag:"🇱🇻",iso:"lv"},
-  "422":{ar:"لبنان",en:"Lebanon",car:"بيروت",cen:"Beirut",flag:"🇱🇧",iso:"lb"},
-  "426":{ar:"ليسوتو",en:"Lesotho",car:"ماسيرو",cen:"Maseru",flag:"🇱🇸",iso:"ls"},
-  "430":{ar:"ليبيريا",en:"Liberia",car:"مونروفيا",cen:"Monrovia",flag:"🇱🇷",iso:"lr"},
-  "434":{ar:"ليبيا",en:"Libya",car:"طرابلس",cen:"Tripoli",flag:"🇱🇾",iso:"ly"},
-  "440":{ar:"ليتوانيا",en:"Lithuania",car:"فيلنيوس",cen:"Vilnius",flag:"🇱🇹",iso:"lt"},
-  "442":{ar:"لوكسمبورغ",en:"Luxembourg",car:"مدينة لوكسمبورغ",cen:"Luxembourg City",flag:"🇱🇺",iso:"lu"},
-  "450":{ar:"مدغشقر",en:"Madagascar",car:"أنتاناناريفو",cen:"Antananarivo",flag:"🇲🇬",iso:"mg"},
-  "454":{ar:"مالاوي",en:"Malawi",car:"ليلونغوي",cen:"Lilongwe",flag:"🇲🇼",iso:"mw"},
-  "458":{ar:"ماليزيا",en:"Malaysia",car:"كوالالمبور",cen:"Kuala Lumpur",flag:"🇲🇾",iso:"my"},
-  "466":{ar:"مالي",en:"Mali",car:"باماكو",cen:"Bamako",flag:"🇲🇱",iso:"ml"},
-  "484":{ar:"المكسيك",en:"Mexico",car:"مكسيكو سيتي",cen:"Mexico City",flag:"🇲🇽",iso:"mx"},
-  "498":{ar:"مولدوفا",en:"Moldova",car:"كيشيناو",cen:"Chișinău",flag:"🇲🇩",iso:"md"},
-  "496":{ar:"منغوليا",en:"Mongolia",car:"أولان باتور",cen:"Ulaanbaatar",flag:"🇲🇳",iso:"mn"},
-  "504":{ar:"المغرب",en:"Morocco",car:"الرباط",cen:"Rabat",flag:"🇲🇦",iso:"ma"},
-  "508":{ar:"موزمبيق",en:"Mozambique",car:"مابوتو",cen:"Maputo",flag:"🇲🇿",iso:"mz"},
-  "516":{ar:"ناميبيا",en:"Namibia",car:"ويندهوك",cen:"Windhoek",flag:"🇳🇦",iso:"na"},
-  "524":{ar:"نيبال",en:"Nepal",car:"كاتماندو",cen:"Kathmandu",flag:"🇳🇵",iso:"np"},
-  "528":{ar:"هولندا",en:"Netherlands",car:"أمستردام",cen:"Amsterdam",flag:"🇳🇱",iso:"nl"},
-  "554":{ar:"نيوزيلندا",en:"New Zealand",car:"ولينغتون",cen:"Wellington",flag:"🇳🇿",iso:"nz"},
-  "558":{ar:"نيكاراغوا",en:"Nicaragua",car:"ماناغوا",cen:"Managua",flag:"🇳🇮",iso:"ni"},
-  "562":{ar:"النيجر",en:"Niger",car:"نيامي",cen:"Niamey",flag:"🇳🇪",iso:"ne"},
-  "566":{ar:"نيجيريا",en:"Nigeria",car:"أبوجا",cen:"Abuja",flag:"🇳🇬",iso:"ng"},
-  "578":{ar:"النرويج",en:"Norway",car:"أوسلو",cen:"Oslo",flag:"🇳🇴",iso:"no"},
-  "512":{ar:"عُمان",en:"Oman",car:"مسقط",cen:"Muscat",flag:"🇴🇲",iso:"om"},
-  "586":{ar:"باكستان",en:"Pakistan",car:"إسلام آباد",cen:"Islamabad",flag:"🇵🇰",iso:"pk"},
-  "591":{ar:"بنما",en:"Panama",car:"مدينة بنما",cen:"Panama City",flag:"🇵🇦",iso:"pa"},
-  "598":{ar:"بابوا غينيا الجديدة",en:"Papua New Guinea",car:"بورت مورسبي",cen:"Port Moresby",flag:"🇵🇬",iso:"pg"},
-  "600":{ar:"باراغواي",en:"Paraguay",car:"أسونسيون",cen:"Asunción",flag:"🇵🇾",iso:"py"},
-  "604":{ar:"بيرو",en:"Peru",car:"ليما",cen:"Lima",flag:"🇵🇪",iso:"pe"},
-  "608":{ar:"الفلبين",en:"Philippines",car:"مانيلا",cen:"Manila",flag:"🇵🇭",iso:"ph"},
-  "616":{ar:"بولندا",en:"Poland",car:"وارسو",cen:"Warsaw",flag:"🇵🇱",iso:"pl"},
-  "620":{ar:"البرتغال",en:"Portugal",car:"لشبونة",cen:"Lisbon",flag:"🇵🇹",iso:"pt"},
-  "275":{ar:"فلسطين",en:"Palestine",car:"رام الله",cen:"Ramallah",flag:"🇵🇸",iso:"ps"},
-  "634":{ar:"قطر",en:"Qatar",car:"الدوحة",cen:"Doha",flag:"🇶🇦",iso:"qa"},
-  "642":{ar:"رومانيا",en:"Romania",car:"بوخارست",cen:"Bucharest",flag:"🇷🇴",iso:"ro"},
-  "643":{ar:"روسيا",en:"Russia",car:"موسكو",cen:"Moscow",flag:"🇷🇺",iso:"ru"},
-  "646":{ar:"رواندا",en:"Rwanda",car:"كيغالي",cen:"Kigali",flag:"🇷🇼",iso:"rw"},
-  "682":{ar:"المملكة العربية السعودية",en:"Saudi Arabia",car:"الرياض",cen:"Riyadh",flag:"🇸🇦",iso:"sa"},
-  "686":{ar:"السنغال",en:"Senegal",car:"داكار",cen:"Dakar",flag:"🇸🇳",iso:"sn"},
-  "694":{ar:"سيراليون",en:"Sierra Leone",car:"فريتاون",cen:"Freetown",flag:"🇸🇱",iso:"sl"},
-  "703":{ar:"سلوفاكيا",en:"Slovakia",car:"براتيسلافا",cen:"Bratislava",flag:"🇸🇰",iso:"sk"},
-  "705":{ar:"سلوفينيا",en:"Slovenia",car:"ليوبليانا",cen:"Ljubljana",flag:"🇸🇮",iso:"si"},
-  "706":{ar:"الصومال",en:"Somalia",car:"مقديشو",cen:"Mogadishu",flag:"🇸🇴",iso:"so"},
-  "710":{ar:"جنوب أفريقيا",en:"South Africa",car:"بريتوريا",cen:"Pretoria",flag:"🇿🇦",iso:"za"},
-  "728":{ar:"جنوب السودان",en:"South Sudan",car:"جوبا",cen:"Juba",flag:"🇸🇸",iso:"ss"},
-  "724":{ar:"إسبانيا",en:"Spain",car:"مدريد",cen:"Madrid",flag:"🇪🇸",iso:"es"},
-  "729":{ar:"السودان",en:"Sudan",car:"الخرطوم",cen:"Khartoum",flag:"🇸🇩",iso:"sd"},
-  "740":{ar:"سورينام",en:"Suriname",car:"باراماريبو",cen:"Paramaribo",flag:"🇸🇷",iso:"sr"},
-  "752":{ar:"السويد",en:"Sweden",car:"ستوكهولم",cen:"Stockholm",flag:"🇸🇪",iso:"se"},
-  "756":{ar:"سويسرا",en:"Switzerland",car:"برن",cen:"Bern",flag:"🇨🇭",iso:"ch"},
-  "760":{ar:"سوريا",en:"Syria",car:"دمشق",cen:"Damascus",flag:"🇸🇾",iso:"sy"},
-  "762":{ar:"طاجيكستان",en:"Tajikistan",car:"دوشانبي",cen:"Dushanbe",flag:"🇹🇯",iso:"tj"},
-  "764":{ar:"تايلاند",en:"Thailand",car:"بانكوك",cen:"Bangkok",flag:"🇹🇭",iso:"th"},
-  "768":{ar:"توغو",en:"Togo",car:"لومي",cen:"Lomé",flag:"🇹🇬",iso:"tg"},
-  "788":{ar:"تونس",en:"Tunisia",car:"تونس",cen:"Tunis",flag:"🇹🇳",iso:"tn"},
-  "792":{ar:"تركيا",en:"Turkey",car:"أنقرة",cen:"Ankara",flag:"🇹🇷",iso:"tr"},
-  "800":{ar:"أوغندا",en:"Uganda",car:"كمبالا",cen:"Kampala",flag:"🇺🇬",iso:"ug"},
-  "804":{ar:"أوكرانيا",en:"Ukraine",car:"كييف",cen:"Kyiv",flag:"🇺🇦",iso:"ua"},
-  "784":{ar:"الإمارات العربية المتحدة",en:"United Arab Emirates",car:"أبوظبي",cen:"Abu Dhabi",flag:"🇦🇪",iso:"ae"},
-  "826":{ar:"المملكة المتحدة",en:"United Kingdom",car:"لندن",cen:"London",flag:"🇬🇧",iso:"gb"},
-  "840":{ar:"الولايات المتحدة",en:"United States",car:"واشنطن",cen:"Washington D.C.",flag:"🇺🇸",iso:"us"},
-  "858":{ar:"أوروغواي",en:"Uruguay",car:"مونتيفيديو",cen:"Montevideo",flag:"🇺🇾",iso:"uy"},
-  "860":{ar:"أوزبكستان",en:"Uzbekistan",car:"طشقند",cen:"Tashkent",flag:"🇺🇿",iso:"uz"},
-  "862":{ar:"فنزويلا",en:"Venezuela",car:"كاراكاس",cen:"Caracas",flag:"🇻🇪",iso:"ve"},
-  "704":{ar:"فيتنام",en:"Vietnam",car:"هانوي",cen:"Hanoi",flag:"🇻🇳",iso:"vn"},
-  "887":{ar:"اليمن",en:"Yemen",car:"صنعاء",cen:"Sana'a",flag:"🇾🇪",iso:"ye"},
-  "894":{ar:"زامبيا",en:"Zambia",car:"لوساكا",cen:"Lusaka",flag:"🇿🇲",iso:"zm"},
-  "716":{ar:"زيمبابوي",en:"Zimbabwe",car:"هراري",cen:"Harare",flag:"🇿🇼",iso:"zw"},
-  "112":{ar:"بيلاروسيا",en:"Belarus",car:"مينسك",cen:"Minsk",flag:"🇧🇾",iso:"by"},
-  "499":{ar:"الجبل الأسود",en:"Montenegro",car:"بودغوريتشا",cen:"Podgorica",flag:"🇲🇪",iso:"me"},
-  "688":{ar:"صربيا",en:"Serbia",car:"بلغراد",cen:"Belgrade",flag:"🇷🇸",iso:"rs"},
-  "807":{ar:"مقدونيا الشمالية",en:"North Macedonia",car:"سكوبيه",cen:"Skopje",flag:"🇲🇰",iso:"mk"},
-  /* ── الدول الناقصة ── */
-  "834":{ar:"تنزانيا",en:"Tanzania",car:"دودوما",cen:"Dodoma",flag:"🇹🇿",iso:"tz"},
-  "051":{ar:"أرمينيا",en:"Armenia",car:"يريفان",cen:"Yerevan",flag:"🇦🇲",iso:"am"},
-  "028":{ar:"أنتيغوا وباربودا",en:"Antigua & Barbuda",car:"سانت جونز",cen:"Saint John's",flag:"🇦🇬",iso:"ag"},
-  "044":{ar:"جزر البهاما",en:"Bahamas",car:"ناساو",cen:"Nassau",flag:"🇧🇸",iso:"bs"},
-  "052":{ar:"باربادوس",en:"Barbados",car:"بريدجتاون",cen:"Bridgetown",flag:"🇧🇧",iso:"bb"},
-  "084":{ar:"بليز",en:"Belize",car:"بلموبان",cen:"Belmopan",flag:"🇧🇿",iso:"bz"},
-  "060":{ar:"برمودا",en:"Bermuda",car:"هاملتون",cen:"Hamilton",flag:"🇧🇲",iso:"bm"},
-  "074":{ar:"جزيرة بوفيه",en:"Bouvet Island",car:"-",cen:"-",flag:"🇧🇻",iso:"bv"},
-  "086":{ar:"إقليم المحيط الهندي البريطاني",en:"British Indian Ocean Territory",car:"دييغو غارسيا",cen:"Diego Garcia",flag:"🇮🇴",iso:"io"},
-  "090":{ar:"جزر سليمان",en:"Solomon Islands",car:"هونيارا",cen:"Honiara",flag:"🇸🇧",iso:"sb"},
-  "092":{ar:"جزر فيرجن البريطانية",en:"British Virgin Islands",car:"رود تاون",cen:"Road Town",flag:"🇻🇬",iso:"vg"},
-  "136":{ar:"جزر كايمان",en:"Cayman Islands",car:"جورج تاون",cen:"George Town",flag:"🇰🇾",iso:"ky"},
-  "174":{ar:"جزر القمر",en:"Comoros",car:"موروني",cen:"Moroni",flag:"🇰🇲",iso:"km"},
-  "184":{ar:"جزر كوك",en:"Cook Islands",car:"أفاروا",cen:"Avarua",flag:"🇨🇰",iso:"ck"},
-  "212":{ar:"دومينيكا",en:"Dominica",car:"روسو",cen:"Roseau",flag:"🇩🇲",iso:"dm"},
-  "238":{ar:"جزر فوكلاند",en:"Falkland Islands",car:"ستانلي",cen:"Stanley",flag:"🇫🇰",iso:"fk"},
-  "242":{ar:"فيجي",en:"Fiji",car:"سوفا",cen:"Suva",flag:"🇫🇯",iso:"fj"},
-  "254":{ar:"غيانا الفرنسية",en:"French Guiana",car:"كايين",cen:"Cayenne",flag:"🇬🇫",iso:"gf"},
-  "258":{ar:"بولينيزيا الفرنسية",en:"French Polynesia",car:"بابيتي",cen:"Papeete",flag:"🇵🇫",iso:"pf"},
-  "260":{ar:"أراضي فرنسا الجنوبية",en:"French Southern Territories",car:"-",cen:"-",flag:"🇹🇫",iso:"tf"},
-  "308":{ar:"غرينادا",en:"Grenada",car:"سانت جورج",cen:"Saint George's",flag:"🇬🇩",iso:"gd"},
-  "312":{ar:"غوادلوب",en:"Guadeloupe",car:"باس-تير",cen:"Basse-Terre",flag:"🇬🇵",iso:"gp"},
-  "316":{ar:"غوام",en:"Guam",car:"هاغاتنا",cen:"Hagåtña",flag:"🇬🇺",iso:"gu"},
-  "304":{ar:"غرينلاند",en:"Greenland",car:"نوك",cen:"Nuuk",flag:"🇬🇱",iso:"gl"},
-  "334":{ar:"جزيرة هيرد وجزر ماكدونالد",en:"Heard & McDonald Islands",car:"-",cen:"-",flag:"🇭🇲",iso:"hm"},
-  "388":{ar:"جامايكا",en:"Jamaica",car:"كينغستون",cen:"Kingston",flag:"🇯🇲",iso:"jm"},
-  "296":{ar:"كيريباتي",en:"Kiribati",car:"تاراوا",cen:"Tarawa",flag:"🇰🇮",iso:"ki"},
-  "408":{ar:"كوريا الشمالية",en:"North Korea",car:"بيونغ يانغ",cen:"Pyongyang",flag:"🇰🇵",iso:"kp"},
-  "414":{ar:"الكويت",en:"Kuwait",car:"مدينة الكويت",cen:"Kuwait City",flag:"🇰🇼",iso:"kw"},
-  "418":{ar:"لاوس",en:"Laos",car:"فيينتيان",cen:"Vientiane",flag:"🇱🇦",iso:"la"},
-  "462":{ar:"جزر المالديف",en:"Maldives",car:"مالي",cen:"Malé",flag:"🇲🇻",iso:"mv"},
-  "466":{ar:"مالي",en:"Mali",car:"باماكو",cen:"Bamako",flag:"🇲🇱",iso:"ml"},
-  "584":{ar:"جزر مارشال",en:"Marshall Islands",car:"ماجورو",cen:"Majuro",flag:"🇲🇭",iso:"mh"},
-  "474":{ar:"مارتينيك",en:"Martinique",car:"فور دو فرانس",cen:"Fort-de-France",flag:"🇲🇶",iso:"mq"},
-  "478":{ar:"موريتانيا",en:"Mauritania",car:"نواكشوط",cen:"Nouakchott",flag:"🇲🇷",iso:"mr"},
-  "480":{ar:"موريشيوس",en:"Mauritius",car:"بورت لويس",cen:"Port Louis",flag:"🇲🇺",iso:"mu"},
-  "175":{ar:"مايوت",en:"Mayotte",car:"ماموتزو",cen:"Mamoudzou",flag:"🇾🇹",iso:"yt"},
-  "583":{ar:"ميكرونيزيا",en:"Micronesia",car:"باليكير",cen:"Palikir",flag:"🇫🇲",iso:"fm"},
-  "492":{ar:"موناكو",en:"Monaco",car:"موناكو",cen:"Monaco",flag:"🇲🇨",iso:"mc"},
-  "500":{ar:"مونتسيرات",en:"Montserrat",car:"بليموث",cen:"Plymouth",flag:"🇲🇸",iso:"ms"},
-  "516":{ar:"ناميبيا",en:"Namibia",car:"ويندهوك",cen:"Windhoek",flag:"🇳🇦",iso:"na"},
-  "520":{ar:"ناورو",en:"Nauru",car:"يارين",cen:"Yaren",flag:"🇳🇷",iso:"nr"},
-  "540":{ar:"كاليدونيا الجديدة",en:"New Caledonia",car:"نوميا",cen:"Nouméa",flag:"🇳🇨",iso:"nc"},
-  "570":{ar:"نيوي",en:"Niue",car:"ألوفي",cen:"Alofi",flag:"🇳🇺",iso:"nu"},
-  "574":{ar:"جزيرة نورفولك",en:"Norfolk Island",car:"كينغستون",cen:"Kingston",flag:"🇳🇫",iso:"nf"},
-  "580":{ar:"جزر ماريانا الشمالية",en:"Northern Mariana Islands",car:"سايبان",cen:"Saipan",flag:"🇲🇵",iso:"mp"},
-  "585":{ar:"بالاو",en:"Palau",car:"نغيرولمود",cen:"Ngerulmud",flag:"🇵🇼",iso:"pw"},
-  "612":{ar:"جزيرة بيتكيرن",en:"Pitcairn Islands",car:"أدامستاون",cen:"Adamstown",flag:"🇵🇳",iso:"pn"},
-  "630":{ar:"بورتوريكو",en:"Puerto Rico",car:"سان خوان",cen:"San Juan",flag:"🇵🇷",iso:"pr"},
-  "638":{ar:"ريونيون",en:"Réunion",car:"سان-دوني",cen:"Saint-Denis",flag:"🇷🇪",iso:"re"},
-  "659":{ar:"سانت كيتس ونيفيس",en:"Saint Kitts & Nevis",car:"باستير",cen:"Basseterre",flag:"🇰🇳",iso:"kn"},
-  "662":{ar:"سانت لوسيا",en:"Saint Lucia",car:"كاستريس",cen:"Castries",flag:"🇱🇨",iso:"lc"},
-  "670":{ar:"سانت فنسنت والغرينادين",en:"St. Vincent & the Grenadines",car:"كينغزتاون",cen:"Kingstown",flag:"🇻🇨",iso:"vc"},
-  "882":{ar:"ساموا",en:"Samoa",car:"أبيا",cen:"Apia",flag:"🇼🇸",iso:"ws"},
-  "678":{ar:"ساو تومي وبرينسيبي",en:"São Tomé & Príncipe",car:"ساو تومي",cen:"São Tomé",flag:"🇸🇹",iso:"st"},
-  "690":{ar:"سيشل",en:"Seychelles",car:"فيكتوريا",cen:"Victoria",flag:"🇸🇨",iso:"sc"},
-  "694":{ar:"سيراليون",en:"Sierra Leone",car:"فريتاون",cen:"Freetown",flag:"🇸🇱",iso:"sl"},
-  "702":{ar:"سنغافورة",en:"Singapore",car:"سنغافورة",cen:"Singapore",flag:"🇸🇬",iso:"sg"},
-  "090":{ar:"جزر سليمان",en:"Solomon Islands",car:"هونيارا",cen:"Honiara",flag:"🇸🇧",iso:"sb"},
-  "706":{ar:"الصومال",en:"Somalia",car:"مقديشو",cen:"Mogadishu",flag:"🇸🇴",iso:"so"},
-  "239":{ar:"جورجيا الجنوبية وجزر ساندويتش الجنوبية",en:"South Georgia",car:"-",cen:"-",flag:"🇬🇸",iso:"gs"},
-  "744":{ar:"سفالبارد وجان ماين",en:"Svalbard & Jan Mayen",car:"لونغيربين",cen:"Longyearbyen",flag:"🇸🇯",iso:"sj"},
-  "748":{ar:"سواتيني",en:"Eswatini",car:"مباباني",cen:"Mbabane",flag:"🇸🇿",iso:"sz"},
-  "626":{ar:"تيمور الشرقية",en:"Timor-Leste",car:"ديلي",cen:"Dili",flag:"🇹🇱",iso:"tl"},
-  "776":{ar:"تونغا",en:"Tonga",car:"نوكوألوفا",cen:"Nukuʻalofa",flag:"🇹🇴",iso:"to"},
-  "780":{ar:"ترينيداد وتوباغو",en:"Trinidad & Tobago",car:"بورت أوف سبين",cen:"Port of Spain",flag:"🇹🇹",iso:"tt"},
-  "796":{ar:"جزر تركس وكايكوس",en:"Turks & Caicos Islands",car:"كوكبيرن تاون",cen:"Cockburn Town",flag:"🇹🇨",iso:"tc"},
-  "798":{ar:"توفالو",en:"Tuvalu",car:"فونافوتي",cen:"Funafuti",flag:"🇹🇻",iso:"tv"},
-  "850":{ar:"جزر العذراء الأمريكية",en:"US Virgin Islands",car:"شارلوت أماليا",cen:"Charlotte Amalie",flag:"🇻🇮",iso:"vi"},
-  "548":{ar:"فانواتو",en:"Vanuatu",car:"بورت فيلا",cen:"Port Vila",flag:"🇻🇺",iso:"vu"},
-  "876":{ar:"جزر والس وفوتونا",en:"Wallis & Futuna",car:"ماتا أوتو",cen:"Mata-Utu",flag:"🇼🇫",iso:"wf"},
-  "732":{ar:"الصحراء الغربية",en:"Western Sahara",car:"العيون",cen:"El Aaiún",flag:"🇪🇭",iso:"eh"},
-  "570":{ar:"نيوي",en:"Niue",car:"ألوفي",cen:"Alofi",flag:"🇳🇺",iso:"nu"},
-  "208":{ar:"الدنمارك",en:"Denmark",car:"كوبنهاغن",cen:"Copenhagen",flag:"🇩🇰",iso:"dk"},
-  "384":{ar:"كوت ديفوار",en:"Côte d'Ivoire",car:"يامسوكرو",cen:"Yamoussoukro",flag:"🇨🇮",iso:"ci"},
-  "454":{ar:"مالاوي",en:"Malawi",car:"ليلونغوي",cen:"Lilongwe",flag:"🇲🇼",iso:"mw"},
-  "686":{ar:"السنغال",en:"Senegal",car:"داكار",cen:"Dakar",flag:"🇸🇳",iso:"sn"},
-  "768":{ar:"توغو",en:"Togo",car:"لومي",cen:"Lomé",flag:"🇹🇬",iso:"tg"},
-  "818":{ar:"مصر",en:"Egypt",car:"القاهرة",cen:"Cairo",flag:"🇪🇬",iso:"eg"},
-  /* دول إضافية مفقودة */
-  "170":{ar:"كولومبيا",en:"Colombia",car:"بوغوتا",cen:"Bogotá",flag:"🇨🇴",iso:"co"},
-  "320":{ar:"غواتيمالا",en:"Guatemala",car:"غواتيمالا سيتي",cen:"Guatemala City",flag:"🇬🇹",iso:"gt"},
-  "340":{ar:"هندوراس",en:"Honduras",car:"تيغوسيغالبا",cen:"Tegucigalpa",flag:"🇭🇳",iso:"hn"},
-  "558":{ar:"نيكاراغوا",en:"Nicaragua",car:"ماناغوا",cen:"Managua",flag:"🇳🇮",iso:"ni"},
-  "591":{ar:"بنما",en:"Panama",car:"مدينة بنما",cen:"Panama City",flag:"🇵🇦",iso:"pa"},
-  "204":{ar:"بنين",en:"Benin",car:"بورتو نوفو",cen:"Porto-Novo",flag:"🇧🇯",iso:"bj"},
-  "854":{ar:"بوركينا فاسو",en:"Burkina Faso",car:"واغادوغو",cen:"Ouagadougou",flag:"🇧🇫",iso:"bf"},
-  "120":{ar:"الكاميرون",en:"Cameroon",car:"ياوندي",cen:"Yaoundé",flag:"🇨🇲",iso:"cm"},
-  "562":{ar:"النيجر",en:"Niger",car:"نيامي",cen:"Niamey",flag:"🇳🇪",iso:"ne"},
-  "566":{ar:"نيجيريا",en:"Nigeria",car:"أبوجا",cen:"Abuja",flag:"🇳🇬",iso:"ng"},
-  "226":{ar:"غينيا الاستوائية",en:"Equatorial Guinea",car:"مالابو",cen:"Malabo",flag:"🇬🇶",iso:"gq"},
-  "266":{ar:"الغابون",en:"Gabon",car:"ليبرفيل",cen:"Libreville",flag:"🇬🇦",iso:"ga"},
-  "178":{ar:"الكونغو",en:"Republic of the Congo",car:"برازافيل",cen:"Brazzaville",flag:"🇨🇬",iso:"cg"},
-  "180":{ar:"الكونغو الديمقراطية",en:"DR Congo",car:"كينشاسا",cen:"Kinshasa",flag:"🇨🇩",iso:"cd"},
-  "800":{ar:"أوغندا",en:"Uganda",car:"كمبالا",cen:"Kampala",flag:"🇺🇬",iso:"ug"},
-  "646":{ar:"رواندا",en:"Rwanda",car:"كيغالي",cen:"Kigali",flag:"🇷🇼",iso:"rw"},
-  "108":{ar:"بوروندي",en:"Burundi",car:"غيتيغا",cen:"Gitega",flag:"🇧🇮",iso:"bi"},
-  "404":{ar:"كينيا",en:"Kenya",car:"نيروبي",cen:"Nairobi",flag:"🇰🇪",iso:"ke"},
-  "231":{ar:"إثيوبيا",en:"Ethiopia",car:"أديس أبابا",cen:"Addis Ababa",flag:"🇪🇹",iso:"et"},
-  "232":{ar:"إريتريا",en:"Eritrea",car:"أسمرة",cen:"Asmara",flag:"🇪🇷",iso:"er"},
-  "706":{ar:"الصومال",en:"Somalia",car:"مقديشو",cen:"Mogadishu",flag:"🇸🇴",iso:"so"},
-  "262":{ar:"جيبوتي",en:"Djibouti",car:"جيبوتي",cen:"Djibouti",flag:"🇩🇯",iso:"dj"},
-  "450":{ar:"مدغشقر",en:"Madagascar",car:"أنتاناناريفو",cen:"Antananarivo",flag:"🇲🇬",iso:"mg"},
-  "508":{ar:"موزمبيق",en:"Mozambique",car:"مابوتو",cen:"Maputo",flag:"🇲🇿",iso:"mz"},
-  "454":{ar:"مالاوي",en:"Malawi",car:"ليلونغوي",cen:"Lilongwe",flag:"🇲🇼",iso:"mw"},
-  "426":{ar:"ليسوتو",en:"Lesotho",car:"ماسيرو",cen:"Maseru",flag:"🇱🇸",iso:"ls"},
-  "748":{ar:"سواتيني",en:"Eswatini",car:"مباباني",cen:"Mbabane",flag:"🇸🇿",iso:"sz"},
-  "516":{ar:"ناميبيا",en:"Namibia",car:"ويندهوك",cen:"Windhoek",flag:"🇳🇦",iso:"na"},
-  "710":{ar:"جنوب أفريقيا",en:"South Africa",car:"بريتوريا",cen:"Pretoria",flag:"🇿🇦",iso:"za"},
-  "716":{ar:"زيمبابوي",en:"Zimbabwe",car:"هراري",cen:"Harare",flag:"🇿🇼",iso:"zw"},
-  "894":{ar:"زامبيا",en:"Zambia",car:"لوساكا",cen:"Lusaka",flag:"🇿🇲",iso:"zm"},
-  "024":{ar:"أنغولا",en:"Angola",car:"لواندا",cen:"Luanda",flag:"🇦🇴",iso:"ao"},
-  "072":{ar:"بتسوانا",en:"Botswana",car:"غابورون",cen:"Gaborone",flag:"🇧🇼",iso:"bw"},
-  "288":{ar:"غانا",en:"Ghana",car:"أكرا",cen:"Accra",flag:"🇬🇭",iso:"gh"},
-  "324":{ar:"غينيا",en:"Guinea",car:"كوناكري",cen:"Conakry",flag:"🇬🇳",iso:"gn"},
-  "694":{ar:"سيراليون",en:"Sierra Leone",car:"فريتاون",cen:"Freetown",flag:"🇸🇱",iso:"sl"},
-  "430":{ar:"ليبيريا",en:"Liberia",car:"مونروفيا",cen:"Monrovia",flag:"🇱🇷",iso:"lr"},
-  "384":{ar:"كوت ديفوار",en:"Côte d'Ivoire",car:"يامسوكرو",cen:"Yamoussoukro",flag:"🇨🇮",iso:"ci"},
-  "288":{ar:"غانا",en:"Ghana",car:"أكرا",cen:"Accra",flag:"🇬🇭",iso:"gh"},
-  "270":{ar:"غامبيا",en:"Gambia",car:"بانجول",cen:"Banjul",flag:"🇬🇲",iso:"gm"},
-  "686":{ar:"السنغال",en:"Senegal",car:"داكار",cen:"Dakar",flag:"🇸🇳",iso:"sn"},
-  "478":{ar:"موريتانيا",en:"Mauritania",car:"نواكشوط",cen:"Nouakchott",flag:"🇲🇷",iso:"mr"},
-  "012":{ar:"الجزائر",en:"Algeria",car:"الجزائر",cen:"Algiers",flag:"🇩🇿",iso:"dz"},
-  "434":{ar:"ليبيا",en:"Libya",car:"طرابلس",cen:"Tripoli",flag:"🇱🇾",iso:"ly"},
-  "788":{ar:"تونس",en:"Tunisia",car:"تونس",cen:"Tunis",flag:"🇹🇳",iso:"tn"},
-  "504":{ar:"المغرب",en:"Morocco",car:"الرباط",cen:"Rabat",flag:"🇲🇦",iso:"ma"},
-  "818":{ar:"مصر",en:"Egypt",car:"القاهرة",cen:"Cairo",flag:"🇪🇬",iso:"eg"},
-  "729":{ar:"السودان",en:"Sudan",car:"الخرطوم",cen:"Khartoum",flag:"🇸🇩",iso:"sd"},
-  "148":{ar:"تشاد",en:"Chad",car:"نجامينا",cen:"N'Djamena",flag:"🇹🇩",iso:"td"},
-  "466":{ar:"مالي",en:"Mali",car:"باماكو",cen:"Bamako",flag:"🇲🇱",iso:"ml"},
-  "854":{ar:"بوركينا فاسو",en:"Burkina Faso",car:"واغادوغو",cen:"Ouagadougou",flag:"🇧🇫",iso:"bf"},
-  "140":{ar:"أفريقيا الوسطى",en:"Central African Republic",car:"بانغي",cen:"Bangui",flag:"🇨🇫",iso:"cf"},
-  "360":{ar:"إندونيسيا",en:"Indonesia",car:"جاكرتا",cen:"Jakarta",flag:"🇮🇩",iso:"id"},
-  "096":{ar:"بروناي",en:"Brunei",car:"بندر سيري بيغاوان",cen:"Bandar Seri Begawan",flag:"🇧🇳",iso:"bn"},
-  "626":{ar:"تيمور الشرقية",en:"Timor-Leste",car:"ديلي",cen:"Dili",flag:"🇹🇱",iso:"tl"},
-  "598":{ar:"بابوا غينيا الجديدة",en:"Papua New Guinea",car:"بورت مورسبي",cen:"Port Moresby",flag:"🇵🇬",iso:"pg"},
-  "090":{ar:"جزر سليمان",en:"Solomon Islands",car:"هونيارا",cen:"Honiara",flag:"🇸🇧",iso:"sb"},
-  "242":{ar:"فيجي",en:"Fiji",car:"سوفا",cen:"Suva",flag:"🇫🇯",iso:"fj"},
-  "548":{ar:"فانواتو",en:"Vanuatu",car:"بورت فيلا",cen:"Port Vila",flag:"🇻🇺",iso:"vu"},
-  "882":{ar:"ساموا",en:"Samoa",car:"أبيا",cen:"Apia",flag:"🇼🇸",iso:"ws"},
-  "776":{ar:"تونغا",en:"Tonga",car:"نوكوألوفا",cen:"Nukuʻalofa",flag:"🇹🇴",iso:"to"},
-  "798":{ar:"توفالو",en:"Tuvalu",car:"فونافوتي",cen:"Funafuti",flag:"🇹🇻",iso:"tv"},
-  "296":{ar:"كيريباتي",en:"Kiribati",car:"تاراوا",cen:"Tarawa",flag:"🇰🇮",iso:"ki"},
-  "583":{ar:"ميكرونيزيا",en:"Micronesia",car:"باليكير",cen:"Palikir",flag:"🇫🇲",iso:"fm"},
-  "584":{ar:"جزر مارشال",en:"Marshall Islands",car:"ماجورو",cen:"Majuro",flag:"🇲🇭",iso:"mh"},
-  "585":{ar:"بالاو",en:"Palau",car:"نغيرولمود",cen:"Ngerulmud",flag:"🇵🇼",iso:"pw"},
-  "520":{ar:"ناورو",en:"Nauru",car:"يارين",cen:"Yaren",flag:"🇳🇷",iso:"nr"},
-  "702":{ar:"سنغافورة",en:"Singapore",car:"سنغافورة",cen:"Singapore",flag:"🇸🇬",iso:"sg"},
-  "096":{ar:"بروناي",en:"Brunei",car:"بندر سيري بيغاوان",cen:"Bandar Seri Begawan",flag:"🇧🇳",iso:"bn"},
-  "462":{ar:"جزر المالديف",en:"Maldives",car:"مالي",cen:"Malé",flag:"🇲🇻",iso:"mv"},
-  "144":{ar:"سريلانكا",en:"Sri Lanka",car:"كولومبو",cen:"Colombo",flag:"🇱🇰",iso:"lk"},
-  "524":{ar:"نيبال",en:"Nepal",car:"كاتماندو",cen:"Kathmandu",flag:"🇳🇵",iso:"np"},
-  "064":{ar:"بوتان",en:"Bhutan",car:"تيمفو",cen:"Thimphu",flag:"🇧🇹",iso:"bt"},
-  "050":{ar:"بنغلاديش",en:"Bangladesh",car:"دكا",cen:"Dhaka",flag:"🇧🇩",iso:"bd"},
-  "356":{ar:"الهند",en:"India",car:"نيودلهي",cen:"New Delhi",flag:"🇮🇳",iso:"in"},
-  "586":{ar:"باكستان",en:"Pakistan",car:"إسلام آباد",cen:"Islamabad",flag:"🇵🇰",iso:"pk"},
-  "004":{ar:"أفغانستان",en:"Afghanistan",car:"كابل",cen:"Kabul",flag:"🇦🇫",iso:"af"},
-  "417":{ar:"قيرغيزستان",en:"Kyrgyzstan",car:"بيشكيك",cen:"Bishkek",flag:"🇰🇬",iso:"kg"},
-  "762":{ar:"طاجيكستان",en:"Tajikistan",car:"دوشانبي",cen:"Dushanbe",flag:"🇹🇯",iso:"tj"},
-  "860":{ar:"أوزبكستان",en:"Uzbekistan",car:"طشقند",cen:"Tashkent",flag:"🇺🇿",iso:"uz"},
-  "795":{ar:"تركمانستان",en:"Turkmenistan",car:"عشق آباد",cen:"Ashgabat",flag:"🇹🇲",iso:"tm"},
-  "398":{ar:"كازاخستان",en:"Kazakhstan",car:"أستانا",cen:"Astana",flag:"🇰🇿",iso:"kz"},
-  "496":{ar:"منغوليا",en:"Mongolia",car:"أولان باتور",cen:"Ulaanbaatar",flag:"🇲🇳",iso:"mn"},
-  "156":{ar:"الصين",en:"China",car:"بكين",cen:"Beijing",flag:"🇨🇳",iso:"cn"},
-  "392":{ar:"اليابان",en:"Japan",car:"طوكيو",cen:"Tokyo",flag:"🇯🇵",iso:"jp"},
-  "410":{ar:"كوريا الجنوبية",en:"South Korea",car:"سيئول",cen:"Seoul",flag:"🇰🇷",iso:"kr"},
-  "408":{ar:"كوريا الشمالية",en:"North Korea",car:"بيونغ يانغ",cen:"Pyongyang",flag:"🇰🇵",iso:"kp"},
-  "704":{ar:"فيتنام",en:"Vietnam",car:"هانوي",cen:"Hanoi",flag:"🇻🇳",iso:"vn"},
-  "116":{ar:"كمبوديا",en:"Cambodia",car:"بنوم بنه",cen:"Phnom Penh",flag:"🇰🇭",iso:"kh"},
-  "418":{ar:"لاوس",en:"Laos",car:"فيينتيان",cen:"Vientiane",flag:"🇱🇦",iso:"la"},
-  "764":{ar:"تايلاند",en:"Thailand",car:"بانكوك",cen:"Bangkok",flag:"🇹🇭",iso:"th"},
-  "104":{ar:"ميانمار",en:"Myanmar",car:"نيبيداو",cen:"Naypyidaw",flag:"🇲🇲",iso:"mm"},
-  "458":{ar:"ماليزيا",en:"Malaysia",car:"كوالالمبور",cen:"Kuala Lumpur",flag:"🇲🇾",iso:"my"},
-  "608":{ar:"الفلبين",en:"Philippines",car:"مانيلا",cen:"Manila",flag:"🇵🇭",iso:"ph"},
-  "792":{ar:"تركيا",en:"Turkey",car:"أنقرة",cen:"Ankara",flag:"🇹🇷",iso:"tr"},
-  "368":{ar:"العراق",en:"Iraq",car:"بغداد",cen:"Baghdad",flag:"🇮🇶",iso:"iq"},
-  "364":{ar:"إيران",en:"Iran",car:"طهران",cen:"Tehran",flag:"🇮🇷",iso:"ir"},
-  "760":{ar:"سوريا",en:"Syria",car:"دمشق",cen:"Damascus",flag:"🇸🇾",iso:"sy"},
-  "422":{ar:"لبنان",en:"Lebanon",car:"بيروت",cen:"Beirut",flag:"🇱🇧",iso:"lb"},
-  "400":{ar:"الأردن",en:"Jordan",car:"عمّان",cen:"Amman",flag:"🇯🇴",iso:"jo"},
-  "376":{ar:"إسرائيل",en:"Israel",car:"تل أبيب",cen:"Tel Aviv",flag:"🇮🇱",iso:"il"},
-  "275":{ar:"فلسطين",en:"Palestine",car:"رام الله",cen:"Ramallah",flag:"🇵🇸",iso:"ps"},
-  "682":{ar:"المملكة العربية السعودية",en:"Saudi Arabia",car:"الرياض",cen:"Riyadh",flag:"🇸🇦",iso:"sa"},
-  "784":{ar:"الإمارات",en:"UAE",car:"أبوظبي",cen:"Abu Dhabi",flag:"🇦🇪",iso:"ae"},
-  "634":{ar:"قطر",en:"Qatar",car:"الدوحة",cen:"Doha",flag:"🇶🇦",iso:"qa"},
-  "048":{ar:"البحرين",en:"Bahrain",car:"المنامة",cen:"Manama",flag:"🇧🇭",iso:"bh"},
-  "414":{ar:"الكويت",en:"Kuwait",car:"مدينة الكويت",cen:"Kuwait City",flag:"🇰🇼",iso:"kw"},
-  "512":{ar:"عُمان",en:"Oman",car:"مسقط",cen:"Muscat",flag:"🇴🇲",iso:"om"},
-  "887":{ar:"اليمن",en:"Yemen",car:"صنعاء",cen:"Sana'a",flag:"🇾🇪",iso:"ye"},
-  "031":{ar:"أذربيجان",en:"Azerbaijan",car:"باكو",cen:"Baku",flag:"🇦🇿",iso:"az"},
-  "268":{ar:"جورجيا",en:"Georgia",car:"تبيليسي",cen:"Tbilisi",flag:"🇬🇪",iso:"ge"},
-  "804":{ar:"أوكرانيا",en:"Ukraine",car:"كييف",cen:"Kyiv",flag:"🇺🇦",iso:"ua"},
-  "642":{ar:"رومانيا",en:"Romania",car:"بوخارست",cen:"Bucharest",flag:"🇷🇴",iso:"ro"},
-  "100":{ar:"بلغاريا",en:"Bulgaria",car:"صوفيا",cen:"Sofia",flag:"🇧🇬",iso:"bg"},
-  "300":{ar:"اليونان",en:"Greece",car:"أثينا",cen:"Athens",flag:"🇬🇷",iso:"gr"},
-  "191":{ar:"كرواتيا",en:"Croatia",car:"زغرب",cen:"Zagreb",flag:"🇭🇷",iso:"hr"},
-  "703":{ar:"سلوفاكيا",en:"Slovakia",car:"براتيسلافا",cen:"Bratislava",flag:"🇸🇰",iso:"sk"},
-  "705":{ar:"سلوفينيا",en:"Slovenia",car:"ليوبليانا",cen:"Ljubljana",flag:"🇸🇮",iso:"si"},
-  "348":{ar:"هنغاريا",en:"Hungary",car:"بودابست",cen:"Budapest",flag:"🇭🇺",iso:"hu"},
-  "203":{ar:"التشيك",en:"Czech Republic",car:"براغ",cen:"Prague",flag:"🇨🇿",iso:"cz"},
-  "616":{ar:"بولندا",en:"Poland",car:"وارسو",cen:"Warsaw",flag:"🇵🇱",iso:"pl"},
-  "276":{ar:"ألمانيا",en:"Germany",car:"برلين",cen:"Berlin",flag:"🇩🇪",iso:"de"},
-  "040":{ar:"النمسا",en:"Austria",car:"فيينا",cen:"Vienna",flag:"🇦🇹",iso:"at"},
-  "756":{ar:"سويسرا",en:"Switzerland",car:"برن",cen:"Bern",flag:"🇨🇭",iso:"ch"},
-  "250":{ar:"فرنسا",en:"France",car:"باريس",cen:"Paris",flag:"🇫🇷",iso:"fr"},
-  "724":{ar:"إسبانيا",en:"Spain",car:"مدريد",cen:"Madrid",flag:"🇪🇸",iso:"es"},
-  "620":{ar:"البرتغال",en:"Portugal",car:"لشبونة",cen:"Lisbon",flag:"🇵🇹",iso:"pt"},
-  "380":{ar:"إيطاليا",en:"Italy",car:"روما",cen:"Rome",flag:"🇮🇹",iso:"it"},
-  "528":{ar:"هولندا",en:"Netherlands",car:"أمستردام",cen:"Amsterdam",flag:"🇳🇱",iso:"nl"},
-  "056":{ar:"بلجيكا",en:"Belgium",car:"بروكسل",cen:"Brussels",flag:"🇧🇪",iso:"be"},
-  "442":{ar:"لوكسمبورغ",en:"Luxembourg",car:"مدينة لوكسمبورغ",cen:"Luxembourg City",flag:"🇱🇺",iso:"lu"},
-  "372":{ar:"أيرلندا",en:"Ireland",car:"دبلن",cen:"Dublin",flag:"🇮🇪",iso:"ie"},
-  "826":{ar:"المملكة المتحدة",en:"United Kingdom",car:"لندن",cen:"London",flag:"🇬🇧",iso:"gb"},
-  "208":{ar:"الدنمارك",en:"Denmark",car:"كوبنهاغن",cen:"Copenhagen",flag:"🇩🇰",iso:"dk"},
-  "578":{ar:"النرويج",en:"Norway",car:"أوسلو",cen:"Oslo",flag:"🇳🇴",iso:"no"},
-  "752":{ar:"السويد",en:"Sweden",car:"ستوكهولم",cen:"Stockholm",flag:"🇸🇪",iso:"se"},
-  "246":{ar:"فنلندا",en:"Finland",car:"هلسنكي",cen:"Helsinki",flag:"🇫🇮",iso:"fi"},
-  "352":{ar:"آيسلندا",en:"Iceland",car:"ريكيافيك",cen:"Reykjavik",flag:"🇮🇸",iso:"is"},
-  "233":{ar:"إستونيا",en:"Estonia",car:"تالين",cen:"Tallinn",flag:"🇪🇪",iso:"ee"},
-  "428":{ar:"لاتفيا",en:"Latvia",car:"ريغا",cen:"Riga",flag:"🇱🇻",iso:"lv"},
-  "440":{ar:"ليتوانيا",en:"Lithuania",car:"فيلنيوس",cen:"Vilnius",flag:"🇱🇹",iso:"lt"},
-  "498":{ar:"مولدوفا",en:"Moldova",car:"كيشيناو",cen:"Chișinău",flag:"🇲🇩",iso:"md"},
-  "070":{ar:"البوسنة والهرسك",en:"Bosnia & Herzegovina",car:"سراييفو",cen:"Sarajevo",flag:"🇧🇦",iso:"ba"},
-  "688":{ar:"صربيا",en:"Serbia",car:"بلغراد",cen:"Belgrade",flag:"🇷🇸",iso:"rs"},
-  "807":{ar:"مقدونيا الشمالية",en:"North Macedonia",car:"سكوبيه",cen:"Skopje",flag:"🇲🇰",iso:"mk"},
-  "008":{ar:"ألبانيا",en:"Albania",car:"تيرانا",cen:"Tirana",flag:"🇦🇱",iso:"al"},
-  "499":{ar:"الجبل الأسود",en:"Montenegro",car:"بودغوريتشا",cen:"Podgorica",flag:"🇲🇪",iso:"me"},
-  "112":{ar:"بيلاروسيا",en:"Belarus",car:"مينسك",cen:"Minsk",flag:"🇧🇾",iso:"by"},
-  "643":{ar:"روسيا",en:"Russia",car:"موسكو",cen:"Moscow",flag:"🇷🇺",iso:"ru"},
-  "124":{ar:"كندا",en:"Canada",car:"أوتاوا",cen:"Ottawa",flag:"🇨🇦",iso:"ca"},
-  "840":{ar:"الولايات المتحدة",en:"United States",car:"واشنطن",cen:"Washington D.C.",flag:"🇺🇸",iso:"us"},
-  "484":{ar:"المكسيك",en:"Mexico",car:"مكسيكو سيتي",cen:"Mexico City",flag:"🇲🇽",iso:"mx"},
-  "076":{ar:"البرازيل",en:"Brazil",car:"برازيليا",cen:"Brasília",flag:"🇧🇷",iso:"br"},
-  "032":{ar:"الأرجنتين",en:"Argentina",car:"بوينس آيرس",cen:"Buenos Aires",flag:"🇦🇷",iso:"ar"},
-  "152":{ar:"تشيلي",en:"Chile",car:"سانتياغو",cen:"Santiago",flag:"🇨🇱",iso:"cl"},
-  "604":{ar:"بيرو",en:"Peru",car:"ليما",cen:"Lima",flag:"🇵🇪",iso:"pe"},
-  "218":{ar:"الإكوادور",en:"Ecuador",car:"كيتو",cen:"Quito",flag:"🇪🇨",iso:"ec"},
-  "862":{ar:"فنزويلا",en:"Venezuela",car:"كاراكاس",cen:"Caracas",flag:"🇻🇪",iso:"ve"},
-  "170":{ar:"كولومبيا",en:"Colombia",car:"بوغوتا",cen:"Bogotá",flag:"🇨🇴",iso:"co"},
-  "068":{ar:"بوليفيا",en:"Bolivia",car:"سوكري",cen:"Sucre",flag:"🇧🇴",iso:"bo"},
-  "600":{ar:"باراغواي",en:"Paraguay",car:"أسونسيون",cen:"Asunción",flag:"🇵🇾",iso:"py"},
-  "858":{ar:"أوروغواي",en:"Uruguay",car:"مونتيفيديو",cen:"Montevideo",flag:"🇺🇾",iso:"uy"},
-  "328":{ar:"غيانا",en:"Guyana",car:"جورج تاون",cen:"Georgetown",flag:"🇬🇾",iso:"gy"},
-  "740":{ar:"سورينام",en:"Suriname",car:"باراماريبو",cen:"Paramaribo",flag:"🇸🇷",iso:"sr"},
-  "036":{ar:"أستراليا",en:"Australia",car:"كانبيرا",cen:"Canberra",flag:"🇦🇺",iso:"au"},
-  "554":{ar:"نيوزيلندا",en:"New Zealand",car:"ولينغتون",cen:"Wellington",flag:"🇳🇿",iso:"nz"},
+// ══════════════════════════════════════════════════════
+//  تحسين #10 — بيانات الدول من REST Countries API
+//  مع بيانات ثابتة احتياطية (fallback) لحالة فشل API
+// ══════════════════════════════════════════════════════
+
+// قاموس ثابت للدول الأساسية (fallback) — كل ID مرة واحدة فقط
+const FALLBACK = {
+  "004":{ar:"أفغانستان",en:"Afghanistan",cap:"Kabul",capa:"كابل",iso:"af"},
+  "008":{ar:"ألبانيا",en:"Albania",cap:"Tirana",capa:"تيرانا",iso:"al"},
+  "012":{ar:"الجزائر",en:"Algeria",cap:"Algiers",capa:"الجزائر",iso:"dz"},
+  "024":{ar:"أنغولا",en:"Angola",cap:"Luanda",capa:"لواندا",iso:"ao"},
+  "032":{ar:"الأرجنتين",en:"Argentina",cap:"Buenos Aires",capa:"بوينس آيرس",iso:"ar"},
+  "036":{ar:"أستراليا",en:"Australia",cap:"Canberra",capa:"كانبيرا",iso:"au"},
+  "040":{ar:"النمسا",en:"Austria",cap:"Vienna",capa:"فيينا",iso:"at"},
+  "031":{ar:"أذربيجان",en:"Azerbaijan",cap:"Baku",capa:"باكو",iso:"az"},
+  "050":{ar:"بنغلاديش",en:"Bangladesh",cap:"Dhaka",capa:"دكا",iso:"bd"},
+  "056":{ar:"بلجيكا",en:"Belgium",cap:"Brussels",capa:"بروكسل",iso:"be"},
+  "064":{ar:"بوتان",en:"Bhutan",cap:"Thimphu",capa:"تيمفو",iso:"bt"},
+  "068":{ar:"بوليفيا",en:"Bolivia",cap:"Sucre",capa:"سوكري",iso:"bo"},
+  "070":{ar:"البوسنة والهرسك",en:"Bosnia & Herzegovina",cap:"Sarajevo",capa:"سراييفو",iso:"ba"},
+  "072":{ar:"بتسوانا",en:"Botswana",cap:"Gaborone",capa:"غابورون",iso:"bw"},
+  "076":{ar:"البرازيل",en:"Brazil",cap:"Brasília",capa:"برازيليا",iso:"br"},
+  "096":{ar:"بروناي",en:"Brunei",cap:"Bandar Seri Begawan",capa:"بندر سيري بيغاوان",iso:"bn"},
+  "100":{ar:"بلغاريا",en:"Bulgaria",cap:"Sofia",capa:"صوفيا",iso:"bg"},
+  "104":{ar:"ميانمار",en:"Myanmar",cap:"Naypyidaw",capa:"نيبيداو",iso:"mm"},
+  "108":{ar:"بوروندي",en:"Burundi",cap:"Gitega",capa:"غيتيغا",iso:"bi"},
+  "112":{ar:"بيلاروسيا",en:"Belarus",cap:"Minsk",capa:"مينسك",iso:"by"},
+  "116":{ar:"كمبوديا",en:"Cambodia",cap:"Phnom Penh",capa:"بنوم بنه",iso:"kh"},
+  "120":{ar:"الكاميرون",en:"Cameroon",cap:"Yaoundé",capa:"ياوندي",iso:"cm"},
+  "124":{ar:"كندا",en:"Canada",cap:"Ottawa",capa:"أوتاوا",iso:"ca"},
+  "140":{ar:"أفريقيا الوسطى",en:"Central African Republic",cap:"Bangui",capa:"بانغي",iso:"cf"},
+  "144":{ar:"سريلانكا",en:"Sri Lanka",cap:"Colombo",capa:"كولومبو",iso:"lk"},
+  "148":{ar:"تشاد",en:"Chad",cap:"N'Djamena",capa:"نجامينا",iso:"td"},
+  "152":{ar:"تشيلي",en:"Chile",cap:"Santiago",capa:"سانتياغو",iso:"cl"},
+  "156":{ar:"الصين",en:"China",cap:"Beijing",capa:"بكين",iso:"cn"},
+  "170":{ar:"كولومبيا",en:"Colombia",cap:"Bogotá",capa:"بوغوتا",iso:"co"},
+  "174":{ar:"جزر القمر",en:"Comoros",cap:"Moroni",capa:"موروني",iso:"km"},
+  "178":{ar:"الكونغو",en:"Republic of the Congo",cap:"Brazzaville",capa:"برازافيل",iso:"cg"},
+  "180":{ar:"الكونغو الديمقراطية",en:"DR Congo",cap:"Kinshasa",capa:"كينشاسا",iso:"cd"},
+  "188":{ar:"كوستاريكا",en:"Costa Rica",cap:"San José",capa:"سان خوسيه",iso:"cr"},
+  "191":{ar:"كرواتيا",en:"Croatia",cap:"Zagreb",capa:"زغرب",iso:"hr"},
+  "192":{ar:"كوبا",en:"Cuba",cap:"Havana",capa:"هافانا",iso:"cu"},
+  "196":{ar:"قبرص",en:"Cyprus",cap:"Nicosia",capa:"نيقوسيا",iso:"cy"},
+  "203":{ar:"التشيك",en:"Czech Republic",cap:"Prague",capa:"براغ",iso:"cz"},
+  "204":{ar:"بنين",en:"Benin",cap:"Porto-Novo",capa:"بورتو نوفو",iso:"bj"},
+  "208":{ar:"الدنمارك",en:"Denmark",cap:"Copenhagen",capa:"كوبنهاغن",iso:"dk"},
+  "214":{ar:"جمهورية الدومينيكان",en:"Dominican Republic",cap:"Santo Domingo",capa:"سانتو دومينغو",iso:"do"},
+  "218":{ar:"الإكوادور",en:"Ecuador",cap:"Quito",capa:"كيتو",iso:"ec"},
+  "818":{ar:"مصر",en:"Egypt",cap:"Cairo",capa:"القاهرة",iso:"eg"},
+  "222":{ar:"السلفادور",en:"El Salvador",cap:"San Salvador",capa:"سان سلفادور",iso:"sv"},
+  "226":{ar:"غينيا الاستوائية",en:"Equatorial Guinea",cap:"Malabo",capa:"مالابو",iso:"gq"},
+  "232":{ar:"إريتريا",en:"Eritrea",cap:"Asmara",capa:"أسمرة",iso:"er"},
+  "233":{ar:"إستونيا",en:"Estonia",cap:"Tallinn",capa:"تالين",iso:"ee"},
+  "231":{ar:"إثيوبيا",en:"Ethiopia",cap:"Addis Ababa",capa:"أديس أبابا",iso:"et"},
+  "246":{ar:"فنلندا",en:"Finland",cap:"Helsinki",capa:"هلسنكي",iso:"fi"},
+  "250":{ar:"فرنسا",en:"France",cap:"Paris",capa:"باريس",iso:"fr"},
+  "266":{ar:"الغابون",en:"Gabon",cap:"Libreville",capa:"ليبرفيل",iso:"ga"},
+  "270":{ar:"غامبيا",en:"Gambia",cap:"Banjul",capa:"بانجول",iso:"gm"},
+  "268":{ar:"جورجيا",en:"Georgia",cap:"Tbilisi",capa:"تبيليسي",iso:"ge"},
+  "276":{ar:"ألمانيا",en:"Germany",cap:"Berlin",capa:"برلين",iso:"de"},
+  "288":{ar:"غانا",en:"Ghana",cap:"Accra",capa:"أكرا",iso:"gh"},
+  "300":{ar:"اليونان",en:"Greece",cap:"Athens",capa:"أثينا",iso:"gr"},
+  "304":{ar:"غرينلاند",en:"Greenland",cap:"Nuuk",capa:"نوك",iso:"gl"},
+  "320":{ar:"غواتيمالا",en:"Guatemala",cap:"Guatemala City",capa:"غواتيمالا سيتي",iso:"gt"},
+  "324":{ar:"غينيا",en:"Guinea",cap:"Conakry",capa:"كوناكري",iso:"gn"},
+  "328":{ar:"غيانا",en:"Guyana",cap:"Georgetown",capa:"جورج تاون",iso:"gy"},
+  "332":{ar:"هايتي",en:"Haiti",cap:"Port-au-Prince",capa:"بور أو برانس",iso:"ht"},
+  "340":{ar:"هندوراس",en:"Honduras",cap:"Tegucigalpa",capa:"تيغوسيغالبا",iso:"hn"},
+  "348":{ar:"هنغاريا",en:"Hungary",cap:"Budapest",capa:"بودابست",iso:"hu"},
+  "352":{ar:"آيسلندا",en:"Iceland",cap:"Reykjavik",capa:"ريكيافيك",iso:"is"},
+  "356":{ar:"الهند",en:"India",cap:"New Delhi",capa:"نيودلهي",iso:"in"},
+  "360":{ar:"إندونيسيا",en:"Indonesia",cap:"Jakarta",capa:"جاكرتا",iso:"id"},
+  "364":{ar:"إيران",en:"Iran",cap:"Tehran",capa:"طهران",iso:"ir"},
+  "368":{ar:"العراق",en:"Iraq",cap:"Baghdad",capa:"بغداد",iso:"iq"},
+  "372":{ar:"أيرلندا",en:"Ireland",cap:"Dublin",capa:"دبلن",iso:"ie"},
+  "376":{ar:"إسرائيل",en:"Israel",cap:"Jerusalem",capa:"القدس",iso:"il"},
+  "380":{ar:"إيطاليا",en:"Italy",cap:"Rome",capa:"روما",iso:"it"},
+  "384":{ar:"كوت ديفوار",en:"Côte d'Ivoire",cap:"Yamoussoukro",capa:"يامسوكرو",iso:"ci"},
+  "392":{ar:"اليابان",en:"Japan",cap:"Tokyo",capa:"طوكيو",iso:"jp"},
+  "400":{ar:"الأردن",en:"Jordan",cap:"Amman",capa:"عمّان",iso:"jo"},
+  "398":{ar:"كازاخستان",en:"Kazakhstan",cap:"Astana",capa:"أستانا",iso:"kz"},
+  "404":{ar:"كينيا",en:"Kenya",cap:"Nairobi",capa:"نيروبي",iso:"ke"},
+  "408":{ar:"كوريا الشمالية",en:"North Korea",cap:"Pyongyang",capa:"بيونغ يانغ",iso:"kp"},
+  "410":{ar:"كوريا الجنوبية",en:"South Korea",cap:"Seoul",capa:"سيئول",iso:"kr"},
+  "414":{ar:"الكويت",en:"Kuwait",cap:"Kuwait City",capa:"مدينة الكويت",iso:"kw"},
+  "417":{ar:"قيرغيزستان",en:"Kyrgyzstan",cap:"Bishkek",capa:"بيشكيك",iso:"kg"},
+  "418":{ar:"لاوس",en:"Laos",cap:"Vientiane",capa:"فيينتيان",iso:"la"},
+  "428":{ar:"لاتفيا",en:"Latvia",cap:"Riga",capa:"ريغا",iso:"lv"},
+  "422":{ar:"لبنان",en:"Lebanon",cap:"Beirut",capa:"بيروت",iso:"lb"},
+  "426":{ar:"ليسوتو",en:"Lesotho",cap:"Maseru",capa:"ماسيرو",iso:"ls"},
+  "430":{ar:"ليبيريا",en:"Liberia",cap:"Monrovia",capa:"مونروفيا",iso:"lr"},
+  "434":{ar:"ليبيا",en:"Libya",cap:"Tripoli",capa:"طرابلس",iso:"ly"},
+  "440":{ar:"ليتوانيا",en:"Lithuania",cap:"Vilnius",capa:"فيلنيوس",iso:"lt"},
+  "442":{ar:"لوكسمبورغ",en:"Luxembourg",cap:"Luxembourg City",capa:"مدينة لوكسمبورغ",iso:"lu"},
+  "450":{ar:"مدغشقر",en:"Madagascar",cap:"Antananarivo",capa:"أنتاناناريفو",iso:"mg"},
+  "454":{ar:"مالاوي",en:"Malawi",cap:"Lilongwe",capa:"ليلونغوي",iso:"mw"},
+  "458":{ar:"ماليزيا",en:"Malaysia",cap:"Kuala Lumpur",capa:"كوالالمبور",iso:"my"},
+  "462":{ar:"جزر المالديف",en:"Maldives",cap:"Malé",capa:"مالي",iso:"mv"},
+  "466":{ar:"مالي",en:"Mali",cap:"Bamako",capa:"باماكو",iso:"ml"},
+  "478":{ar:"موريتانيا",en:"Mauritania",cap:"Nouakchott",capa:"نواكشوط",iso:"mr"},
+  "480":{ar:"موريشيوس",en:"Mauritius",cap:"Port Louis",capa:"بورت لويس",iso:"mu"},
+  "484":{ar:"المكسيك",en:"Mexico",cap:"Mexico City",capa:"مكسيكو سيتي",iso:"mx"},
+  "496":{ar:"منغوليا",en:"Mongolia",cap:"Ulaanbaatar",capa:"أولان باتور",iso:"mn"},
+  "498":{ar:"مولدوفا",en:"Moldova",cap:"Chișinău",capa:"كيشيناو",iso:"md"},
+  "499":{ar:"الجبل الأسود",en:"Montenegro",cap:"Podgorica",capa:"بودغوريتشا",iso:"me"},
+  "504":{ar:"المغرب",en:"Morocco",cap:"Rabat",capa:"الرباط",iso:"ma"},
+  "508":{ar:"موزمبيق",en:"Mozambique",cap:"Maputo",capa:"مابوتو",iso:"mz"},
+  "512":{ar:"عُمان",en:"Oman",cap:"Muscat",capa:"مسقط",iso:"om"},
+  "516":{ar:"ناميبيا",en:"Namibia",cap:"Windhoek",capa:"ويندهوك",iso:"na"},
+  "524":{ar:"نيبال",en:"Nepal",cap:"Kathmandu",capa:"كاتماندو",iso:"np"},
+  "528":{ar:"هولندا",en:"Netherlands",cap:"Amsterdam",capa:"أمستردام",iso:"nl"},
+  "554":{ar:"نيوزيلندا",en:"New Zealand",cap:"Wellington",capa:"ولينغتون",iso:"nz"},
+  "558":{ar:"نيكاراغوا",en:"Nicaragua",cap:"Managua",capa:"ماناغوا",iso:"ni"},
+  "562":{ar:"النيجر",en:"Niger",cap:"Niamey",capa:"نيامي",iso:"ne"},
+  "566":{ar:"نيجيريا",en:"Nigeria",cap:"Abuja",capa:"أبوجا",iso:"ng"},
+  "578":{ar:"النرويج",en:"Norway",cap:"Oslo",capa:"أوسلو",iso:"no"},
+  "586":{ar:"باكستان",en:"Pakistan",cap:"Islamabad",capa:"إسلام آباد",iso:"pk"},
+  "591":{ar:"بنما",en:"Panama",cap:"Panama City",capa:"مدينة بنما",iso:"pa"},
+  "598":{ar:"بابوا غينيا الجديدة",en:"Papua New Guinea",cap:"Port Moresby",capa:"بورت مورسبي",iso:"pg"},
+  "600":{ar:"باراغواي",en:"Paraguay",cap:"Asunción",capa:"أسونسيون",iso:"py"},
+  "604":{ar:"بيرو",en:"Peru",cap:"Lima",capa:"ليما",iso:"pe"},
+  "608":{ar:"الفلبين",en:"Philippines",cap:"Manila",capa:"مانيلا",iso:"ph"},
+  "616":{ar:"بولندا",en:"Poland",cap:"Warsaw",capa:"وارسو",iso:"pl"},
+  "620":{ar:"البرتغال",en:"Portugal",cap:"Lisbon",capa:"لشبونة",iso:"pt"},
+  "275":{ar:"فلسطين",en:"Palestine",cap:"Ramallah",capa:"رام الله",iso:"ps"},
+  "634":{ar:"قطر",en:"Qatar",cap:"Doha",capa:"الدوحة",iso:"qa"},
+  "642":{ar:"رومانيا",en:"Romania",cap:"Bucharest",capa:"بوخارست",iso:"ro"},
+  "643":{ar:"روسيا",en:"Russia",cap:"Moscow",capa:"موسكو",iso:"ru"},
+  "646":{ar:"رواندا",en:"Rwanda",cap:"Kigali",capa:"كيغالي",iso:"rw"},
+  "682":{ar:"المملكة العربية السعودية",en:"Saudi Arabia",cap:"Riyadh",capa:"الرياض",iso:"sa"},
+  "686":{ar:"السنغال",en:"Senegal",cap:"Dakar",capa:"داكار",iso:"sn"},
+  "688":{ar:"صربيا",en:"Serbia",cap:"Belgrade",capa:"بلغراد",iso:"rs"},
+  "694":{ar:"سيراليون",en:"Sierra Leone",cap:"Freetown",capa:"فريتاون",iso:"sl"},
+  "703":{ar:"سلوفاكيا",en:"Slovakia",cap:"Bratislava",capa:"براتيسلافا",iso:"sk"},
+  "705":{ar:"سلوفينيا",en:"Slovenia",cap:"Ljubljana",capa:"ليوبليانا",iso:"si"},
+  "706":{ar:"الصومال",en:"Somalia",cap:"Mogadishu",capa:"مقديشو",iso:"so"},
+  "710":{ar:"جنوب أفريقيا",en:"South Africa",cap:"Pretoria",capa:"بريتوريا",iso:"za"},
+  "716":{ar:"زيمبابوي",en:"Zimbabwe",cap:"Harare",capa:"هراري",iso:"zw"},
+  "724":{ar:"إسبانيا",en:"Spain",cap:"Madrid",capa:"مدريد",iso:"es"},
+  "728":{ar:"جنوب السودان",en:"South Sudan",cap:"Juba",capa:"جوبا",iso:"ss"},
+  "729":{ar:"السودان",en:"Sudan",cap:"Khartoum",capa:"الخرطوم",iso:"sd"},
+  "732":{ar:"الصحراء الغربية",en:"Western Sahara",cap:"El Aaiún",capa:"العيون",iso:"eh"},
+  "740":{ar:"سورينام",en:"Suriname",cap:"Paramaribo",capa:"باراماريبو",iso:"sr"},
+  "748":{ar:"سواتيني",en:"Eswatini",cap:"Mbabane",capa:"مباباني",iso:"sz"},
+  "752":{ar:"السويد",en:"Sweden",cap:"Stockholm",capa:"ستوكهولم",iso:"se"},
+  "756":{ar:"سويسرا",en:"Switzerland",cap:"Bern",capa:"برن",iso:"ch"},
+  "760":{ar:"سوريا",en:"Syria",cap:"Damascus",capa:"دمشق",iso:"sy"},
+  "762":{ar:"طاجيكستان",en:"Tajikistan",cap:"Dushanbe",capa:"دوشانبي",iso:"tj"},
+  "764":{ar:"تايلاند",en:"Thailand",cap:"Bangkok",capa:"بانكوك",iso:"th"},
+  "768":{ar:"توغو",en:"Togo",cap:"Lomé",capa:"لومي",iso:"tg"},
+  "788":{ar:"تونس",en:"Tunisia",cap:"Tunis",capa:"تونس",iso:"tn"},
+  "792":{ar:"تركيا",en:"Turkey",cap:"Ankara",capa:"أنقرة",iso:"tr"},
+  "795":{ar:"تركمانستان",en:"Turkmenistan",cap:"Ashgabat",capa:"عشق آباد",iso:"tm"},
+  "800":{ar:"أوغندا",en:"Uganda",cap:"Kampala",capa:"كمبالا",iso:"ug"},
+  "804":{ar:"أوكرانيا",en:"Ukraine",cap:"Kyiv",capa:"كييف",iso:"ua"},
+  "784":{ar:"الإمارات العربية المتحدة",en:"United Arab Emirates",cap:"Abu Dhabi",capa:"أبوظبي",iso:"ae"},
+  "826":{ar:"المملكة المتحدة",en:"United Kingdom",cap:"London",capa:"لندن",iso:"gb"},
+  "840":{ar:"الولايات المتحدة",en:"United States",cap:"Washington D.C.",capa:"واشنطن",iso:"us"},
+  "834":{ar:"تنزانيا",en:"Tanzania",cap:"Dodoma",capa:"دودوما",iso:"tz"},
+  "854":{ar:"بوركينا فاسو",en:"Burkina Faso",cap:"Ouagadougou",capa:"واغادوغو",iso:"bf"},
+  "858":{ar:"أوروغواي",en:"Uruguay",cap:"Montevideo",capa:"مونتيفيديو",iso:"uy"},
+  "860":{ar:"أوزبكستان",en:"Uzbekistan",cap:"Tashkent",capa:"طشقند",iso:"uz"},
+  "862":{ar:"فنزويلا",en:"Venezuela",cap:"Caracas",capa:"كاراكاس",iso:"ve"},
+  "704":{ar:"فيتنام",en:"Vietnam",cap:"Hanoi",capa:"هانوي",iso:"vn"},
+  "887":{ar:"اليمن",en:"Yemen",cap:"Sana'a",capa:"صنعاء",iso:"ye"},
+  "894":{ar:"زامبيا",en:"Zambia",cap:"Lusaka",capa:"لوساكا",iso:"zm"},
+  "807":{ar:"مقدونيا الشمالية",en:"North Macedonia",cap:"Skopje",capa:"سكوبيه",iso:"mk"},
+  "051":{ar:"أرمينيا",en:"Armenia",cap:"Yerevan",capa:"يريفان",iso:"am"},
+  "262":{ar:"جيبوتي",en:"Djibouti",cap:"Djibouti",capa:"جيبوتي",iso:"dj"},
+  "238":{ar:"جزر فوكلاند",en:"Falkland Islands",cap:"Stanley",capa:"ستانلي",iso:"fk"},
+  "242":{ar:"فيجي",en:"Fiji",cap:"Suva",capa:"سوفا",iso:"fj"},
+  "254":{ar:"غيانا الفرنسية",en:"French Guiana",cap:"Cayenne",capa:"كايين",iso:"gf"},
+  "626":{ar:"تيمور الشرقية",en:"Timor-Leste",cap:"Dili",capa:"ديلي",iso:"tl"},
+  "388":{ar:"جامايكا",en:"República de Jamaica",cap:"Kingston",capa:"كينغستون",iso:"jm"},
+  "332":{ar:"هايتي",en:"Haiti",cap:"Port-au-Prince",capa:"بور أو برانس",iso:"ht"},
+  "214":{ar:"جمهورية الدومينيكان",en:"Dominican Republic",cap:"Santo Domingo",capa:"سانتو دومينغو",iso:"do"},
+  "192":{ar:"كوبا",en:"Cuba",cap:"Havana",capa:"هافانا",iso:"cu"},
+  "630":{ar:"بورتوريكو",en:"Puerto Rico",cap:"San Juan",capa:"سان خوان",iso:"pr"},
+  "780":{ar:"ترينيداد وتوباغو",en:"Trinidad & Tobago",cap:"Port of Spain",capa:"بورت أوف سبين",iso:"tt"},
+  "540":{ar:"كاليدونيا الجديدة",en:"New Caledonia",cap:"Nouméa",capa:"نوميا",iso:"nc"},
+  "258":{ar:"بولينيزيا الفرنسية",en:"French Polynesia",cap:"Papeete",capa:"بابيتي",iso:"pf"},
+  "090":{ar:"جزر سليمان",en:"Solomon Islands",cap:"Honiara",capa:"هونيارا",iso:"sb"},
+  "548":{ar:"فانواتو",en:"Vanuatu",cap:"Port Vila",capa:"بورت فيلا",iso:"vu"},
+  "598":{ar:"بابوا غينيا الجديدة",en:"Papua New Guinea",cap:"Port Moresby",capa:"بورت مورسبي",iso:"pg"},
+  "702":{ar:"سنغافورة",en:"Singapore",cap:"Singapore",capa:"سنغافورة",iso:"sg"},
+  "048":{ar:"البحرين",en:"Bahrain",cap:"Manama",capa:"المنامة",iso:"bh"},
+  "690":{ar:"سيشل",en:"Seychelles",cap:"Victoria",capa:"فيكتوريا",iso:"sc"},
+  "174":{ar:"جزر القمر",en:"Comoros",cap:"Moroni",capa:"موروني",iso:"km"},
+  "678":{ar:"ساو تومي وبرينسيبي",en:"São Tomé & Príncipe",cap:"São Tomé",capa:"ساو تومي",iso:"st"},
+  "204":{ar:"بنين",en:"Benin",cap:"Porto-Novo",capa:"بورتو نوفو",iso:"bj"},
+  "324":{ar:"غينيا",en:"Guinea",cap:"Conakry",capa:"كوناكري",iso:"gn"},
+  "212":{ar:"دومينيكا",en:"Dominica",cap:"Roseau",capa:"روسو",iso:"dm"},
+  "308":{ar:"غرينادا",en:"Grenada",cap:"Saint George's",capa:"سانت جورج",iso:"gd"},
+  "659":{ar:"سانت كيتس ونيفيس",en:"Saint Kitts & Nevis",cap:"Basseterre",capa:"باستير",iso:"kn"},
+  "662":{ar:"سانت لوسيا",en:"Saint Lucia",cap:"Castries",capa:"كاستريس",iso:"lc"},
+  "670":{ar:"سانت فنسنت",en:"St. Vincent & Grenadines",cap:"Kingstown",capa:"كينغزتاون",iso:"vc"},
+  "028":{ar:"أنتيغوا وباربودا",en:"Antigua & Barbuda",cap:"Saint John's",capa:"سانت جونز",iso:"ag"},
+  "882":{ar:"ساموا",en:"Samoa",cap:"Apia",capa:"أبيا",iso:"ws"},
+  "776":{ar:"تونغا",en:"Tonga",cap:"Nukuʻalofa",capa:"نوكوألوفا",iso:"to"},
+  "798":{ar:"توفالو",en:"Tuvalu",cap:"Funafuti",capa:"فونافوتي",iso:"tv"},
+  "296":{ar:"كيريباتي",en:"Kiribati",cap:"Tarawa",capa:"تاراوا",iso:"ki"},
+  "583":{ar:"ميكرونيزيا",en:"Micronesia",cap:"Palikir",capa:"باليكير",iso:"fm"},
+  "584":{ar:"جزر مارشال",en:"Marshall Islands",cap:"Majuro",capa:"ماجورو",iso:"mh"},
+  "585":{ar:"بالاو",en:"Palau",cap:"Ngerulmud",capa:"نغيرولمود",iso:"pw"},
+  "520":{ar:"ناورو",en:"Nauru",cap:"Yaren",capa:"يارين",iso:"nr"},
 };
 
-const SMALL=[
-  // أوروبا الصغيرة
-  {ar:"الفاتيكان",en:"Vatican City",car:"مدينة الفاتيكان",cen:"Vatican City",flag:"🇻🇦",iso:"va",lat:41.903,lng:12.453,eu:true},
-  {ar:"موناكو",en:"Monaco",car:"موناكو",cen:"Monaco",flag:"🇲🇨",iso:"mc",lat:43.738,lng:7.406,eu:true},
-  {ar:"سان مارينو",en:"San Marino",car:"سان مارينو",cen:"San Marino",flag:"🇸🇲",iso:"sm",lat:43.942,lng:12.457,eu:true},
-  {ar:"ليختنشتاين",en:"Liechtenstein",car:"فادوز",cen:"Vaduz",flag:"🇱🇮",iso:"li",lat:47.14,lng:9.52,eu:true},
-  {ar:"أندورا",en:"Andorra",car:"أندورا لا فيلا",cen:"Andorra la Vella",flag:"🇦🇩",iso:"ad",lat:42.506,lng:1.521,eu:true},
-  {ar:"مالطا",en:"Malta",car:"فاليتا",cen:"Valletta",flag:"🇲🇹",iso:"mt",lat:35.9,lng:14.51,eu:true},
-  {ar:"لوكسمبورغ",en:"Luxembourg",car:"مدينة لوكسمبورغ",cen:"Luxembourg City",flag:"🇱🇺",iso:"lu",lat:49.61,lng:6.13,eu:true},
-  {ar:"قبرص",en:"Cyprus",car:"نيقوسيا",cen:"Nicosia",flag:"🇨🇾",iso:"cy",lat:35.13,lng:33.43,eu:true},
-  {ar:"آيسلندا",en:"Iceland",car:"ريكيافيك",cen:"Reykjavik",flag:"🇮🇸",iso:"is",lat:64.96,lng:-19.02,eu:true},
-  {ar:"كوسوفو",en:"Kosovo",car:"بريشتينا",cen:"Pristina",flag:"🇽🇰",iso:"xk",lat:42.57,lng:20.9,eu:true},
-  {ar:"صربيا",en:"Serbia",car:"بلغراد",cen:"Belgrade",flag:"🇷🇸",iso:"rs",lat:44.02,lng:21.0,eu:true},
-  {ar:"مقدونيا الشمالية",en:"North Macedonia",car:"سكوبيه",cen:"Skopje",flag:"🇲🇰",iso:"mk",lat:41.61,lng:21.74,eu:true},
-  {ar:"الجبل الأسود",en:"Montenegro",car:"بودغوريتشا",cen:"Podgorica",flag:"🇲🇪",iso:"me",lat:42.78,lng:19.37,eu:true},
-  {ar:"ألبانيا",en:"Albania",car:"تيرانا",cen:"Tirana",flag:"🇦🇱",iso:"al",lat:41.15,lng:20.17,eu:true},
-  {ar:"مولدوفا",en:"Moldova",car:"كيشيناو",cen:"Chișinău",flag:"🇲🇩",iso:"md",lat:47.41,lng:28.37,eu:true},
-  {ar:"أرمينيا",en:"Armenia",car:"يريفان",cen:"Yerevan",flag:"🇦🇲",iso:"am",lat:40.07,lng:45.04,eu:true},
-  // أفريقيا الصغيرة
-  {ar:"موريشيوس",en:"Mauritius",car:"بورت لويس",cen:"Port Louis",flag:"🇲🇺",iso:"mu",lat:-20.16,lng:57.55},
-  {ar:"سيشل",en:"Seychelles",car:"فيكتوريا",cen:"Victoria",flag:"🇸🇨",iso:"sc",lat:-4.62,lng:55.45},
-  {ar:"جزر القمر",en:"Comoros",car:"موروني",cen:"Moroni",flag:"🇰🇲",iso:"km",lat:-11.7,lng:43.37},
-  {ar:"كابو فيردي",en:"Cape Verde",car:"براية",cen:"Praia",flag:"🇨🇻",iso:"cv",lat:14.93,lng:-23.51},
-  {ar:"ساو تومي وبرينسيبي",en:"São Tomé & Príncipe",car:"ساو تومي",cen:"São Tomé",flag:"🇸🇹",iso:"st",lat:0.19,lng:6.61},
-  {ar:"سواتيني",en:"Eswatini",car:"مباباني",cen:"Mbabane",flag:"🇸🇿",iso:"sz",lat:-26.52,lng:31.47},
-  {ar:"جيبوتي",en:"Djibouti",car:"جيبوتي",cen:"Djibouti",flag:"🇩🇯",iso:"dj",lat:11.83,lng:42.59},
-  {ar:"غينيا بيساو",en:"Guinea-Bissau",car:"بيساو",cen:"Bissau",flag:"🇬🇼",iso:"gw",lat:11.8,lng:-15.18},
-  // آسيا الصغيرة
-  {ar:"جزر المالديف",en:"Maldives",car:"مالي",cen:"Malé",flag:"🇲🇻",iso:"mv",lat:3.2,lng:73.22},
-  {ar:"سنغافورة",en:"Singapore",car:"سنغافورة",cen:"Singapore",flag:"🇸🇬",iso:"sg",lat:1.35,lng:103.82},
-  {ar:"البحرين",en:"Bahrain",car:"المنامة",cen:"Manama",flag:"🇧🇭",iso:"bh",lat:26.07,lng:50.55},
-  {ar:"تيمور الشرقية",en:"Timor-Leste",car:"ديلي",cen:"Dili",flag:"🇹🇱",iso:"tl",lat:-8.87,lng:125.73},
-  // الكاريبي
-  {ar:"جامايكا",en:"Jamaica",car:"كينغستون",cen:"Kingston",flag:"🇯🇲",iso:"jm",lat:18.1,lng:-77.3},
-  {ar:"ترينيداد وتوباغو",en:"Trinidad & Tobago",car:"بورت أوف سبين",cen:"Port of Spain",flag:"🇹🇹",iso:"tt",lat:10.69,lng:-61.22},
-  {ar:"باربادوس",en:"Barbados",car:"بريدجتاون",cen:"Bridgetown",flag:"🇧🇧",iso:"bb",lat:13.19,lng:-59.54},
-  {ar:"سانت لوسيا",en:"Saint Lucia",car:"كاستريس",cen:"Castries",flag:"🇱🇨",iso:"lc",lat:13.9,lng:-60.98},
-  {ar:"سانت فنسنت",en:"St. Vincent & Grenadines",car:"كينغزتاون",cen:"Kingstown",flag:"🇻🇨",iso:"vc",lat:13.25,lng:-61.2},
-  {ar:"غرينادا",en:"Grenada",car:"سانت جورج",cen:"Saint George's",flag:"🇬🇩",iso:"gd",lat:12.11,lng:-61.68},
-  {ar:"أنتيغوا وباربودا",en:"Antigua & Barbuda",car:"سانت جونز",cen:"Saint John's",flag:"🇦🇬",iso:"ag",lat:17.07,lng:-61.8},
-  {ar:"دومينيكا",en:"Dominica",car:"روسو",cen:"Roseau",flag:"🇩🇲",iso:"dm",lat:15.41,lng:-61.37},
-  {ar:"سانت كيتس ونيفيس",en:"Saint Kitts & Nevis",car:"باستير",cen:"Basseterre",flag:"🇰🇳",iso:"kn",lat:17.35,lng:-62.78},
-  {ar:"جزر البهاما",en:"Bahamas",car:"ناساو",cen:"Nassau",flag:"🇧🇸",iso:"bs",lat:25.03,lng:-77.4},
-  {ar:"بورتوريكو",en:"Puerto Rico",car:"سان خوان",cen:"San Juan",flag:"🇵🇷",iso:"pr",lat:18.22,lng:-66.59},
-  {ar:"بليز",en:"Belize",car:"بلموبان",cen:"Belmopan",flag:"🇧🇿",iso:"bz",lat:17.19,lng:-88.5},
-  // المحيط الهادئ
-  {ar:"فيجي",en:"Fiji",car:"سوفا",cen:"Suva",flag:"🇫🇯",iso:"fj",lat:-17.71,lng:178.06},
-  {ar:"فانواتو",en:"Vanuatu",car:"بورت فيلا",cen:"Port Vila",flag:"🇻🇺",iso:"vu",lat:-15.38,lng:166.96},
-  {ar:"ساموا",en:"Samoa",car:"أبيا",cen:"Apia",flag:"🇼🇸",iso:"ws",lat:-13.76,lng:-172.1},
-  {ar:"تونغا",en:"Tonga",car:"نوكوألوفا",cen:"Nukuʻalofa",flag:"🇹🇴",iso:"to",lat:-21.18,lng:-175.2},
-  {ar:"كيريباتي",en:"Kiribati",car:"تاراوا",cen:"Tarawa",flag:"🇰🇮",iso:"ki",lat:1.87,lng:-157.36},
-  {ar:"ميكرونيزيا",en:"Micronesia",car:"باليكير",cen:"Palikir",flag:"🇫🇲",iso:"fm",lat:6.92,lng:158.18},
-  {ar:"جزر مارشال",en:"Marshall Islands",car:"ماجورو",cen:"Majuro",flag:"🇲🇭",iso:"mh",lat:7.1,lng:171.38},
-  {ar:"بالاو",en:"Palau",car:"نغيرولمود",cen:"Ngerulmud",flag:"🇵🇼",iso:"pw",lat:7.51,lng:134.58},
-  {ar:"ناورو",en:"Nauru",car:"يارين",cen:"Yaren",flag:"🇳🇷",iso:"nr",lat:-0.53,lng:166.92},
-  {ar:"توفالو",en:"Tuvalu",car:"فونافوتي",cen:"Funafuti",flag:"🇹🇻",iso:"tv",lat:-8.52,lng:179.2},
+// دول صغيرة كنقاط — كل دولة مرة واحدة
+const SMALL = [
+  {ar:"الفاتيكان",en:"Vatican City",cap:"Vatican City",capa:"الفاتيكان",iso:"va",lat:41.903,lng:12.453,eu:true},
+  {ar:"موناكو",en:"Monaco",cap:"Monaco",capa:"موناكو",iso:"mc",lat:43.738,lng:7.406,eu:true},
+  {ar:"سان مارينو",en:"San Marino",cap:"San Marino",capa:"سان مارينو",iso:"sm",lat:43.942,lng:12.457,eu:true},
+  {ar:"ليختنشتاين",en:"Liechtenstein",cap:"Vaduz",capa:"فادوز",iso:"li",lat:47.14,lng:9.52,eu:true},
+  {ar:"أندورا",en:"Andorra",cap:"Andorra la Vella",capa:"أندورا لا فيلا",iso:"ad",lat:42.506,lng:1.521,eu:true},
+  {ar:"مالطا",en:"Malta",cap:"Valletta",capa:"فاليتا",iso:"mt",lat:35.9,lng:14.51,eu:true},
+  {ar:"كوسوفو",en:"Kosovo",cap:"Pristina",capa:"بريشتينا",iso:"xk",lat:42.57,lng:20.9,eu:true},
+  {ar:"موريشيوس",en:"Mauritius",cap:"Port Louis",capa:"بورت لويس",iso:"mu",lat:-20.16,lng:57.55},
+  {ar:"سيشل",en:"Seychelles",cap:"Victoria",capa:"فيكتوريا",iso:"sc",lat:-4.62,lng:55.45},
+  {ar:"جزر القمر",en:"Comoros",cap:"Moroni",capa:"موروني",iso:"km",lat:-11.7,lng:43.37},
+  {ar:"كابو فيردي",en:"Cape Verde",cap:"Praia",capa:"براية",iso:"cv",lat:14.93,lng:-23.51},
+  {ar:"ساو تومي وبرينسيبي",en:"São Tomé & Príncipe",cap:"São Tomé",capa:"ساو تومي",iso:"st",lat:0.19,lng:6.61},
+  {ar:"غينيا بيساو",en:"Guinea-Bissau",cap:"Bissau",capa:"بيساو",iso:"gw",lat:11.8,lng:-15.18},
+  {ar:"جيبوتي",en:"Djibouti",cap:"Djibouti",capa:"جيبوتي",iso:"dj",lat:11.83,lng:42.59},
+  {ar:"سواتيني",en:"Eswatini",cap:"Mbabane",capa:"مباباني",iso:"sz",lat:-26.52,lng:31.47},
+  {ar:"جزر المالديف",en:"Maldives",cap:"Malé",capa:"مالي",iso:"mv",lat:3.2,lng:73.22},
+  {ar:"سنغافورة",en:"Singapore",cap:"Singapore",capa:"سنغافورة",iso:"sg",lat:1.35,lng:103.82},
+  {ar:"البحرين",en:"Bahrain",cap:"Manama",capa:"المنامة",iso:"bh",lat:26.07,lng:50.55},
+  {ar:"تيمور الشرقية",en:"Timor-Leste",cap:"Dili",capa:"ديلي",iso:"tl",lat:-8.87,lng:125.73},
+  {ar:"بروناي",en:"Brunei",cap:"Bandar Seri Begawan",capa:"بندر سيري بيغاوان",iso:"bn",lat:4.53,lng:114.73},
+  {ar:"جامايكا",en:"Jamaica",cap:"Kingston",capa:"كينغستون",iso:"jm",lat:18.1,lng:-77.3},
+  {ar:"ترينيداد وتوباغو",en:"Trinidad & Tobago",cap:"Port of Spain",capa:"بورت أوف سبين",iso:"tt",lat:10.69,lng:-61.22},
+  {ar:"باربادوس",en:"Barbados",cap:"Bridgetown",capa:"بريدجتاون",iso:"bb",lat:13.19,lng:-59.54},
+  {ar:"سانت لوسيا",en:"Saint Lucia",cap:"Castries",capa:"كاستريس",iso:"lc",lat:13.9,lng:-60.98},
+  {ar:"سانت فنسنت",en:"St. Vincent & Grenadines",cap:"Kingstown",capa:"كينغزتاون",iso:"vc",lat:13.25,lng:-61.2},
+  {ar:"غرينادا",en:"Grenada",cap:"Saint George's",capa:"سانت جورج",iso:"gd",lat:12.11,lng:-61.68},
+  {ar:"أنتيغوا وباربودا",en:"Antigua & Barbuda",cap:"Saint John's",capa:"سانت جونز",iso:"ag",lat:17.07,lng:-61.8},
+  {ar:"دومينيكا",en:"Dominica",cap:"Roseau",capa:"روسو",iso:"dm",lat:15.41,lng:-61.37},
+  {ar:"سانت كيتس ونيفيس",en:"Saint Kitts & Nevis",cap:"Basseterre",capa:"باستير",iso:"kn",lat:17.35,lng:-62.78},
+  {ar:"جزر البهاما",en:"Bahamas",cap:"Nassau",capa:"ناساو",iso:"bs",lat:25.03,lng:-77.4},
+  {ar:"بورتوريكو",en:"Puerto Rico",cap:"San Juan",capa:"سان خوان",iso:"pr",lat:18.22,lng:-66.59},
+  {ar:"بليز",en:"Belize",cap:"Belmopan",capa:"بلموبان",iso:"bz",lat:17.19,lng:-88.5},
+  {ar:"فيجي",en:"Fiji",cap:"Suva",capa:"سوفا",iso:"fj",lat:-17.71,lng:178.06},
+  {ar:"فانواتو",en:"Vanuatu",cap:"Port Vila",capa:"بورت فيلا",iso:"vu",lat:-15.38,lng:166.96},
+  {ar:"ساموا",en:"Samoa",cap:"Apia",capa:"أبيا",iso:"ws",lat:-13.76,lng:-172.1},
+  {ar:"تونغا",en:"Tonga",cap:"Nukuʻalofa",capa:"نوكوألوفا",iso:"to",lat:-21.18,lng:-175.2},
+  {ar:"كيريباتي",en:"Kiribati",cap:"Tarawa",capa:"تاراوا",iso:"ki",lat:1.87,lng:-157.36},
+  {ar:"ميكرونيزيا",en:"Micronesia",cap:"Palikir",capa:"باليكير",iso:"fm",lat:6.92,lng:158.18},
+  {ar:"جزر مارشال",en:"Marshall Islands",cap:"Majuro",capa:"ماجورو",iso:"mh",lat:7.1,lng:171.38},
+  {ar:"بالاو",en:"Palau",cap:"Ngerulmud",capa:"نغيرولمود",iso:"pw",lat:7.51,lng:134.58},
+  {ar:"ناورو",en:"Nauru",cap:"Yaren",capa:"يارين",iso:"nr",lat:-0.53,lng:166.92},
+  {ar:"توفالو",en:"Tuvalu",cap:"Funafuti",capa:"فونافوتي",iso:"tv",lat:-8.52,lng:179.2},
 ];
 
-const COLORS=["#2d6a8a","#3a7d6b","#8a5a2d","#6b3a7d","#7d6b3a","#2d8a5a","#8a2d5a","#3a6b8a","#6b8a3a","#8a3a6b","#2d5a8a","#5a8a2d","#8a6b2d","#2d8a6b","#6b2d8a","#4a7a5a","#7a4a6a","#5a6a7a","#7a6a4a","#4a5a7a","#1f6b5a","#5a1f6b","#6b5a1f","#1f5a6b","#5a6b1f","#2a5580","#55802a","#804055","#804040","#2a8055","#3d7d5a","#7d3d7a"];
-const EU_COLOR="#e8a030";
+const COLORS = [
+  "#2d6a8a","#3a7d6b","#8a5a2d","#6b3a7d","#7d6b3a","#2d8a5a",
+  "#8a2d5a","#3a6b8a","#6b8a3a","#8a3a6b","#2d5a8a","#5a8a2d",
+  "#8a6b2d","#2d8a6b","#6b2d8a","#4a7a5a","#7a4a6a","#5a6a7a",
+  "#7a6a4a","#4a5a7a","#1f6b5a","#5a1f6b","#6b5a1f","#1f5a6b",
+  "#5a6b1f","#2a5580","#55802a","#804055","#804040","#2a8055",
+  "#3d7d5a","#7d3d7a"
+];
+const EU_COL = "#e8a030";
 
-/* ── DOM refs ── */
-const svgEl=document.getElementById("ms");
-const svg=d3.select(svgEl);
-const mcEl=document.getElementById("mc");
-const tt=document.getElementById("tt");
-const zinfo=document.getElementById("zinfo");
-const loader=document.getElementById("loader");
-const counter=document.getElementById("counter");
-const isTouch='ontouchstart' in window;
+// ── مصدر الأعلام — تحسين #3 ──
+function flagURL(iso){ return `https://flagcdn.com/w80/${iso.toLowerCase()}.png`; }
 
-/* ── Projection ── */
-const proj=d3.geoNaturalEarth1().scale(153).translate([480,250]);
-const geoPath=d3.geoPath().projection(proj);
+// ── دمج بيانات API مع الـ fallback ──
+let CD = {}; // سيُملأ بعد جلب API أو من FALLBACK
 
-/* ── Zoom ── */
-const zoom=d3.zoom()
-  .scaleExtent([1,14])
-  .on("zoom",e=>{
-    gMap.attr("transform",e.transform);
-    const k=e.transform.k;
-    d3.selectAll(".cp").attr("stroke-width",0.4/k);
-    d3.selectAll(".sm-dot").attr("r",d=>d.eu?Math.max(2.5,5/k):Math.max(1.5,4/k));
-    d3.selectAll(".sm-dot").attr("stroke-width",0.7/k);
-    zinfo.textContent="×"+k.toFixed(1);
-  });
-
-svg.call(zoom);
-svg.on("dblclick.zoom",null);
-
-const gMap=svg.append("g");
-
-/* ── Tooltip ── */
-let ttTimer=null;
-function showTT(clientX,clientY,info){
-  clearTimeout(ttTimer);
-  document.getElementById("tt-emoji").textContent=info.flag;
-  document.getElementById("tt-emoji").style.display="block";
-  const img=document.getElementById("tt-img");
-  img.style.display="none";
-  img.onload=()=>{document.getElementById("tt-emoji").style.display="none";img.style.display="block";};
-  img.onerror=()=>{document.getElementById("tt-emoji").style.display="block";img.style.display="none";};
-  img.src=`https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/flags/4x3/${info.iso}.svg`;
-  img.alt=info.en;
-  document.getElementById("tt-ar").textContent=info.ar;
-  document.getElementById("tt-en").textContent=info.en;
-  document.getElementById("tt-cap-ar").textContent=info.car;
-  document.getElementById("tt-cap-en").textContent=info.cen;
-  tt.classList.add("vis");
-
-  if(!isTouch){
-    const W=window.innerWidth,H=window.innerHeight;
-    let x=clientX+16, y=clientY-20;
-    if(x+230>W) x=clientX-238;
-    if(y+180>H) y=clientY-180;
-    if(y<0) y=8;
-    tt.style.left=x+"px"; tt.style.top=y+"px";
-    tt.style.transform="";
+function buildFromFallback(){
+  CD = {};
+  for(const [id,v] of Object.entries(FALLBACK)){
+    CD[id] = {ar:v.ar, en:v.en, cap:v.cap, capa:v.capa||v.cap, iso:v.iso};
   }
 }
-function hideTT(delay=0){
-  ttTimer=setTimeout(()=>tt.classList.remove("vis"),delay);
+
+// محاولة REST Countries API مع timeout — تحسين #7 و #10
+async function loadCountriesAPI(){
+  const ctrl = new AbortController();
+  const tid = setTimeout(()=>ctrl.abort(), 8000);
+  try{
+    document.getElementById("load-status").textContent = "جلب بيانات API…";
+    const res = await fetch(
+      "https://restcountries.com/v3.1/all?fields=cca3,name,capital,translations,flags,cca2",
+      {signal: ctrl.signal}
+    );
+    clearTimeout(tid);
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const data = await res.json();
+    CD = {};
+    // نحوّل cca3 → رقم ISO 3166-1 numeric عبر FALLBACK كـ lookup
+    const isoToNum = {};
+    for(const [num,v] of Object.entries(FALLBACK)) isoToNum[v.iso.toUpperCase()] = num;
+
+    for(const c of data){
+      const alpha2 = c.cca2?.toLowerCase();
+      const num = isoToNum[c.cca2] || null;
+      const arName = c.translations?.ara?.common || c.name?.common || "";
+      const enName = c.name?.common || "";
+      const cap = (c.capital||[])[0] || "";
+      // احتفظ بالعربي من FALLBACK أولاً إذا موجود
+      const fallNum = num ? FALLBACK[num] : null;
+      if(num){
+        CD[num] = {
+          ar: fallNum?.ar || arName,
+          en: enName,
+          cap: cap,
+          capa: fallNum?.capa || cap,
+          iso: alpha2 || (fallNum?.iso||"")
+        };
+      }
+    }
+    // أضف أي دول في FALLBACK غير موجودة في API
+    for(const [id,v] of Object.entries(FALLBACK)){
+      if(!CD[id]) CD[id] = {ar:v.ar,en:v.en,cap:v.cap,capa:v.capa||v.cap,iso:v.iso};
+    }
+    document.getElementById("load-status").textContent = "";
+  } catch(e){
+    clearTimeout(tid);
+    console.warn("API failed, using fallback:", e.message);
+    buildFromFallback();
+    document.getElementById("load-status").textContent = "";
+  }
 }
 
-/* ── Zoom to Europe ── */
-function zoomEurope(){
-  const W=window.innerWidth, H=window.innerHeight;
-  const scvbW=960,scvbH=500;
-  /* Europe bbox in viewBox coords */
-  const ex0=425,ey0=58,ex1=715,ey1=305;
-  const bW=ex1-ex0,bH=ey1-ey0;
-  const svgW=svgEl.clientWidth||W, svgH=svgEl.clientHeight||(H-104);
-  const scaleX=svgW/scvbW, scaleY=svgH/scvbH;
-  const s=Math.min(12,0.88/Math.max(bW/svgW*scaleX,bH/svgH*scaleY));
-  const cx=(ex0+bW/2)/scvbW*svgW, cy=(ey0+bH/2)/scvbH*svgH;
-  svg.transition().duration(750).call(
-    zoom.transform,
-    d3.zoomIdentity.translate(svgW/2-s*cx,svgH/2-s*cy).scale(s)
-  );
+// ── رسم الخريطة ──
+const svgEl = document.getElementById("ms");
+const svg = d3.select(svgEl);
+const mcEl = document.getElementById("mc");
+const tt = document.getElementById("tt");
+const isTouch = 'ontouchstart' in window;
+const proj = d3.geoNaturalEarth1().scale(153).translate([480,250]);
+const geoPath = d3.geoPath().projection(proj);
+
+const zoom = d3.zoom().scaleExtent([1,14]).on("zoom", e=>{
+  gMap.attr("transform", e.transform);
+  const k = e.transform.k;
+  // تحسين #5 — نقاط أكبر
+  d3.selectAll(".sm-dot").attr("r", d => d.eu ? Math.max(2.5,6/k) : Math.max(2,5/k));
+  document.getElementById("zinfo").textContent = "×" + k.toFixed(1);
+});
+svg.call(zoom);
+svg.on("dblclick.zoom", null);
+const gMap = svg.append("g");
+
+let ttTm = null;
+function showTT(cx, cy, info){
+  clearTimeout(ttTm);
+  const img = document.getElementById("tt-img");
+  const err = document.getElementById("tt-err");
+  img.style.display = "none"; err.style.display = "none";
+  // أعلام صور — تحسين #3
+  img.onload  = ()=>{ img.style.display="block"; err.style.display="none"; };
+  img.onerror = ()=>{ err.style.display="block"; img.style.display="none"; };
+  img.src = flagURL(info.iso);
+  img.alt = info.en||"";
+  document.getElementById("tt-ar").textContent   = info.ar  || info.en || "";
+  document.getElementById("tt-en").textContent   = info.en  || "";
+  document.getElementById("tt-cap-ar").textContent = info.capa || info.cap || "";
+  document.getElementById("tt-cap-en").textContent = info.cap  || "";
+  tt.classList.add("vis");
+  if(!isTouch){
+    const W=window.innerWidth, H=window.innerHeight;
+    let x=cx+16, y=cy-20;
+    if(x+230>W) x=cx-238; if(y+185>H) y=cy-185; if(y<4) y=4;
+    tt.style.left=x+"px"; tt.style.top=y+"px"; tt.style.transform="";
+  }
+}
+function hideTT(d=0){ ttTm=setTimeout(()=>tt.classList.remove("vis"),d); }
+
+function zoomEU(){
+  const ex0=425,ey0=58,ex1=715,ey1=305,bW=ex1-ex0,bH=ey1-ey0;
+  const sW=svgEl.clientWidth||window.innerWidth;
+  const sH=svgEl.clientHeight||(window.innerHeight-136);
+  const s=Math.min(12,.88/Math.max(bW/sW*(sW/960),bH/sH*(sH/500)));
+  const cx=(ex0+bW/2)/960*sW, cy=(ey0+bH/2)/500*sH;
+  svg.transition().duration(700).call(zoom.transform,d3.zoomIdentity.translate(sW/2-s*cx,sH/2-s*cy).scale(s));
 }
 
-/* ── Button handlers ── */
-document.getElementById("zin").addEventListener("click",()=>svg.transition().duration(280).call(zoom.scaleBy,1.6));
-document.getElementById("zout").addEventListener("click",()=>svg.transition().duration(280).call(zoom.scaleBy,0.625));
-document.getElementById("zrst").addEventListener("click",()=>svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity));
-document.getElementById("zbtn-eu").addEventListener("click",zoomEurope);
+document.getElementById("zin").onclick  = ()=>svg.transition().duration(280).call(zoom.scaleBy,1.6);
+document.getElementById("zout").onclick = ()=>svg.transition().duration(280).call(zoom.scaleBy,.625);
+document.getElementById("zrst").onclick = ()=>svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity);
+document.getElementById("zbtn-eu").onclick = zoomEU;
 
-/* ── Drag detection ── */
-let didDrag=false,dragStartX=0,dragStartY=0;
-svg.on("mousedown",(e)=>{didDrag=false;dragStartX=e.clientX;dragStartY=e.clientY;mcEl.classList.add("dragging");})
-   .on("mousemove.d",(e)=>{if(Math.abs(e.clientX-dragStartX)>4||Math.abs(e.clientY-dragStartY)>4)didDrag=true;})
+let didDrag=false, dX=0, dY=0;
+svg.on("mousedown",e=>{didDrag=false;dX=e.clientX;dY=e.clientY;mcEl.classList.add("dragging");})
+   .on("mousemove.d",e=>{if(Math.abs(e.clientX-dX)>4||Math.abs(e.clientY-dY)>4)didDrag=true;})
    .on("mouseup",()=>mcEl.classList.remove("dragging"));
 
-/* ── Touch: single tap to show tooltip ── */
-let touchMoved=false,touchStartX=0,touchStartY=0;
-mcEl.addEventListener("touchstart",e=>{
-  touchMoved=false;
-  touchStartX=e.touches[0].clientX;
-  touchStartY=e.touches[0].clientY;
-},{passive:true});
-mcEl.addEventListener("touchmove",e=>{
-  if(Math.abs(e.touches[0].clientX-touchStartX)>8||Math.abs(e.touches[0].clientY-touchStartY)>8)
-    touchMoved=true;
-},{passive:true});
+let tMoved=false, tX=0, tY=0;
+mcEl.addEventListener("touchstart",e=>{tMoved=false;tX=e.touches[0].clientX;tY=e.touches[0].clientY;},{passive:true});
+mcEl.addEventListener("touchmove",e=>{if(Math.abs(e.touches[0].clientX-tX)>8||Math.abs(e.touches[0].clientY-tY)>8)tMoved=true;},{passive:true});
 
-/* ══ LOAD DATA ══ */
-fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
-  .then(r=>r.json())
-  .then(world=>{
-    const countries=topojson.feature(world,world.objects.countries);
-    const cmap={};
-    countries.features.forEach((f,i)=>{cmap[f.id]=COLORS[i%COLORS.length];});
+// ── تحميل الخريطة الجغرافية ──
+async function initMap(){
+  // تشغيل API و TopoJSON بالتوازي
+  const ctrl2 = new AbortController();
+  const tid2 = setTimeout(()=>ctrl2.abort(), 10000);
+  const [_, world] = await Promise.all([
+    loadCountriesAPI(),
+    fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",{signal:ctrl2.signal}).then(r=>r.json())
+  ]);
+  clearTimeout(tid2);
 
-    /* count known countries */
-    const known=countries.features.filter(f=>CD[String(f.id).padStart(3,"0")]).length + SMALL.length;
-    counter.textContent=known+" دولة";
+  const countries = topojson.feature(world, world.objects.countries);
 
-    /* ocean bg */
-    gMap.append("rect").attr("width",960).attr("height",500).attr("fill","#0d1e3a");
+  // تحسين #2 — لون ثابت حسب رقم الدولة
+  const cmap = {};
+  countries.features.forEach(f=>{ cmap[f.id] = COLORS[Number(f.id)%COLORS.length]; });
 
-    /* country paths */
-    gMap.selectAll(".cp")
-      .data(countries.features)
-      .enter().append("path")
-      .attr("class","cp")
-      .attr("d",geoPath)
-      .attr("fill",d=>cmap[d.id])
-      .on("mousemove",function(event,d){
-        if(didDrag||isTouch)return;
-        const id=String(d.id).padStart(3,"0");
-        const info=CD[id]; if(!info){hideTT(0);return;}
-        showTT(event.clientX,event.clientY,info);
-      })
-      .on("mouseleave",()=>{if(!isTouch)hideTT(80);})
-      .on("click",function(event,d){
-        if(didDrag)return;
-        d3.selectAll(".cp.active").classed("active",false);
-        d3.select(this).classed("active",true);
-        if(isTouch&&!touchMoved){
-          const id=String(d.id).padStart(3,"0");
-          const info=CD[id]; if(!info)return;
-          const rect=this.getBoundingClientRect();
-          showTT(rect.left+rect.width/2, rect.top+rect.height/2, info);
-          hideTT(3500);
-        }
-      });
+  const known = countries.features.filter(f=>CD[String(f.id).padStart(3,"0")]).length + SMALL.length;
+  document.getElementById("counter").textContent = known + " دولة";
 
-    /* borders */
-    gMap.append("path")
-      .datum(topojson.mesh(world,world.objects.countries,(a,b)=>a!==b))
-      .attr("fill","none").attr("stroke","#1a2a4a").attr("stroke-width",0.3).attr("d",geoPath);
+  gMap.append("rect").attr("width",960).attr("height",500).attr("fill","#0d1e3a");
 
-    /* small country dots */
-    gMap.selectAll(".sm-dot")
-      .data(SMALL)
-      .enter().append("circle")
-      .attr("class","sm-dot")
-      .attr("cx",d=>proj([d.lng,d.lat])[0])
-      .attr("cy",d=>proj([d.lng,d.lat])[1])
-      .attr("r",d=>d.eu?5:3.8)
-      .attr("fill",d=>d.eu?EU_COLOR:COLORS[SMALL.indexOf(d)%COLORS.length])
-      .attr("stroke","#fff")
-      .attr("stroke-width",0.7)
-      .on("mousemove",(event,d)=>{
-        if(isTouch)return;
-        showTT(event.clientX,event.clientY,d);
-      })
-      .on("mouseleave",()=>{if(!isTouch)hideTT(80);})
-      .on("click",(event,d)=>{
-        if(touchMoved)return;
-        event.stopPropagation();
-        const el=event.currentTarget;
-        const rect=el.getBoundingClientRect();
-        showTT(rect.left+rect.width/2,rect.top-10,d);
-        if(isTouch)hideTT(3500);
-      });
+  // تحسين #4 — mouseenter بدل mousemove
+  gMap.selectAll(".cp")
+    .data(countries.features).enter().append("path")
+    .attr("class","cp").attr("d",geoPath).attr("fill",d=>cmap[d.id])
+    .on("mouseenter", function(ev,d){         // تحسين #4
+      if(isTouch) return;
+      const id = String(d.id).padStart(3,"0");
+      const info = CD[id]; if(!info){ hideTT(0); return; }
+      const rc = this.getBoundingClientRect();
+      showTT(rc.left+rc.width/2, rc.top+rc.height/2, info);
+    })
+    .on("mousemove", function(ev,d){           // لتحديث موضع tooltip عند الحركة داخل الدولة
+      if(isTouch||didDrag) return;
+      const id = String(d.id).padStart(3,"0");
+      if(!CD[id]){ hideTT(0); return; }
+      if(!isTouch){
+        const W=window.innerWidth,H=window.innerHeight;
+        let x=ev.clientX+16, y=ev.clientY-20;
+        if(x+230>W) x=ev.clientX-238; if(y+185>H) y=ev.clientY-185; if(y<4) y=4;
+        tt.style.left=x+"px"; tt.style.top=y+"px";
+      }
+    })
+    .on("mouseleave", ()=>{ if(!isTouch) hideTT(80); })
+    .on("click", function(ev,d){
+      if(didDrag) return;
+      d3.selectAll(".cp.active").classed("active",false);
+      d3.select(this).classed("active",true);
+      if(isTouch&&!tMoved){
+        const id = String(d.id).padStart(3,"0");
+        const info = CD[id]; if(!info) return;
+        const rc = this.getBoundingClientRect();
+        showTT(rc.left+rc.width/2, rc.top+rc.height/2, info);
+        hideTT(3500);
+      }
+    });
 
-    /* hide loader */
-    setTimeout(()=>loader.classList.add("gone"),300);
-  })
-  .catch(()=>{
-    loader.innerHTML="<p style='color:#f66'>تعذّر تحميل الخريطة. تحقق من الاتصال بالإنترنت.</p>";
-  });
+  gMap.append("path")
+    .datum(topojson.mesh(world,world.objects.countries,(a,b)=>a!==b))
+    .attr("fill","none").attr("stroke","#1a2a4a").attr("stroke-width",.3).attr("d",geoPath);
+
+  // نقاط الدول الصغيرة
+  gMap.selectAll(".sm-dot").data(SMALL).enter().append("circle")
+    .attr("class","sm-dot")
+    .attr("cx", d=>proj([d.lng,d.lat])[0])
+    .attr("cy", d=>proj([d.lng,d.lat])[1])
+    .attr("r",  d=>d.eu?5:3.5)
+    .attr("fill", d=>d.eu?EU_COL:COLORS[SMALL.indexOf(d)%COLORS.length])
+    .attr("stroke","#fff").attr("stroke-width",.6)
+    // تحسين #4
+    .on("mouseenter", (ev,d)=>{ if(!isTouch){ const el=ev.currentTarget,rc=el.getBoundingClientRect(); showTT(rc.left+rc.width/2,rc.top-8,d); }})
+    .on("mouseleave", ()=>{ if(!isTouch) hideTT(80); })
+    .on("click", (ev,d)=>{
+      if(tMoved) return;
+      ev.stopPropagation();
+      const rc=ev.currentTarget.getBoundingClientRect();
+      showTT(rc.left+rc.width/2, rc.top-8, d);
+      if(isTouch) hideTT(3500);
+    });
+
+  setTimeout(()=>document.getElementById("loader").classList.add("gone"),300);
+}
+
+initMap().catch(e=>{
+  console.error(e);
+  buildFromFallback();
+  document.getElementById("loader").innerHTML="<p style='color:#f88'>تعذّر تحميل الخريطة. تحقق من الاتصال.</p>";
+});
 </script>
 </body>
 </html>
